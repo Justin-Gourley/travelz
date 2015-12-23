@@ -1,0 +1,583 @@
+//
+//  GameScreen.swift
+//  TravelZ
+//
+//  Created by Justin on 12/11/15.
+//  Copyright © 2015 Justin. All rights reserved.
+//
+
+import UIKit
+import SpriteKit
+
+class GameScreen: SKScene {
+
+    
+    var color: [UIColor] = [UIColor.redColor(), UIColor.blueColor(), UIColor.brownColor(), UIColor.yellowColor(), UIColor.whiteColor()]
+    var level: Int?
+    var bulletNode: [SKNode] = []
+    var bulletFireTo: [CGPoint] = []
+    var numberOfBullets = 0
+    var playerNode: SKSpriteNode!
+    var playerMove: Int = 0
+    var isPlayerMoving = false
+    var bulletIsActive: [Bool] = []
+    var playerAnimateState = 0
+    
+    var allowedToFire = true
+    var shotsAt: CGPoint?
+    var movingPlayer = false
+    var numberOfZombies: Int = 0
+    var zombieHealth: [Double] = []
+    var zombieNodes: [SKSpriteNode] = []
+    var zombieClass: [zombieType] = []
+    var isReloading = false
+    var shotsRemaining = 0
+    var zombiesLeft = 0
+    var viewController: UIViewController?
+    var hasGameEnded = false
+    var barricadeNode: SKSpriteNode!
+    var barricadeHealth: Double?
+    var barricadeHealthNode: SKSpriteNode!
+    var setAttackBack: [Int] = []
+    var backgroundNode: SKSpriteNode?
+    
+    var currentGun: guns?
+    var secondaryGun: guns?
+    
+    let info = AppDelegate()
+    
+    struct guns
+    {
+        let name: String
+        let type: String
+        var damage: Double
+        var velocity: Double
+        var spread: Int
+        var shotSpeed: Double
+        var ammoClip: Int
+        var reloadTime: Double
+    }
+    
+    struct zombieType
+    {
+        var speed: CGFloat
+        var type: String
+        var canAttack: Bool
+    }
+    
+    override func didMoveToView(view: SKView) {
+        self.view?.showsNodeCount = true
+        self.view?.showsFPS = true
+
+        currentGun = guns.init(name: "pistolDefault", type: "pistol", damage: 20, velocity: 100, spread: 2, shotSpeed: 0.3, ammoClip: 10, reloadTime: 2.5)
+        secondaryGun = guns.init(name: "machineGunDefault", type: "machineGun", damage: 50, velocity: 75, spread: 5, shotSpeed: 0.1, ammoClip: 30, reloadTime: 0)
+        shotsRemaining = (currentGun?.ammoClip)!
+        loadGameData()
+        if (level == nil)
+        {
+            print("Error loading level")
+            level = 0
+        }
+        //setbackground of level
+        if (level == 0)
+        {
+            let image: UIImage = UIImage(named: "location1")!
+            let texture: SKTexture = SKTexture(image: image)
+            backgroundNode = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: self.frame.size)
+        }
+        else
+        {
+            backgroundNode = SKSpriteNode(color: color[level!], size: self.frame.size)
+        }
+        backgroundNode!.position = CGPoint(x: self.frame.size.width / 2, y: self.frame.size.height / 2)
+        backgroundNode!.name  = "background"
+        backgroundNode?.zPosition = 1
+        addChild(backgroundNode!)
+
+        
+        //create player node
+        playerNode = SKSpriteNode(texture: SKTexture(imageNamed: "PlayerStill"), color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width/15, height: self.frame.height/8))
+        playerNode.position = CGPoint(x: ((self.frame.size.width / 10) * 9), y: self.frame.height / 2)
+        playerNode.position.x = ((self.frame.size.width / 10) * 9) - ((playerNode.position.y / 2) + 20)
+        playerNode.name = "playerNode"
+        playerNode.zPosition = 10
+        addChild(playerNode)
+        
+        barricadeNode = SKSpriteNode(texture: SKTexture(imageNamed: "BarricadeFull"), color: UIColor.whiteColor(), size: CGSize(width: self.frame.width / 10, height: (self.frame.height / 6) * 4))
+        barricadeNode.position = CGPoint(x: (self.frame.width / 20) * 12, y: (self.frame.height / 2 - self.barricadeNode.frame.height / 4))
+        barricadeNode.name = "barricadeNode"
+        barricadeNode.zPosition = 10
+        addChild(barricadeNode)
+        
+        barricadeHealthNode = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: self.frame.size.width / 5, height: self.frame.size.height / 10))
+        barricadeHealthNode.position = CGPoint(x: self.frame.width / 2, y: ((self.frame.height / 10) * 9))
+        barricadeHealthNode.zPosition = 15
+        barricadeHealthNode.name = "healthBarNode"
+        addChild(barricadeHealthNode)
+        
+        updateHealth()
+        
+        let switchGunNode = SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: self.frame.size.width / 6,height: self.frame.size.height / 10))
+        switchGunNode.position = CGPoint(x: ((self.frame.size.width / 10) * 9), y: ((self.frame.size.height / 10) * 9))
+        switchGunNode.name = "switchGun"
+        switchGunNode.zPosition = 10
+        addChild(switchGunNode)
+        
+        createZombies()
+
+    }
+    
+    func createZombies()
+    {
+        let randomNum: UInt32 = (UInt32)((level! + 1) * 10)
+        let random = arc4random_uniform(randomNum) + 25
+        numberOfZombies = (Int)(random)
+        zombiesLeft = numberOfZombies
+        print("Number of zombies spawned for level: \(numberOfZombies)")
+        for (var i = 0; i < numberOfZombies; i++)
+        {
+            zombieHealth.append(100)
+            let node = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+            var randomX: CGFloat = 0
+            if (i < 6)
+            {
+                randomX = (CGFloat)(arc4random_uniform(500) + 200)
+            }
+            else
+            {
+                randomX = (CGFloat)(arc4random_uniform(1000))
+            }
+            node.position = CGPoint(x: -(randomX), y: (CGFloat)((arc4random_uniform((UInt32)(((self.frame.height / 6) * 4) - (playerNode.frame.height / 2)))) + (UInt32)(self.frame.height / 20)))
+            node.zPosition = 8
+            zombieNodes.append(node)
+            let speedRandom = arc4random_uniform(2) + 1
+            if (speedRandom < 1)
+            {
+                print("A Zombie is broken.... he wont move?!?!?")
+            }
+            zombieClass.append(zombieType.init(speed: (CGFloat)(speedRandom), type: "normal", canAttack: true))
+            addChild(zombieNodes[i])
+        }
+    }
+    
+    func loadGameData()
+    {
+        guard let levelLoad: Int = NSUserDefaults.standardUserDefaults() .objectForKey("level") as? Int
+            else {
+                print("unable to load level... setting level to 0")
+                level = 0
+                return
+        }
+        guard let health: Double = NSUserDefaults.standardUserDefaults() .objectForKey("barricadeHealth") as? Double
+            else {
+                print("Unable to load barricade health... setting health to 100")
+                barricadeHealth = 100
+                return
+        }
+        print("----------\nSave loaded:\nPlayer is on level: \(levelLoad)\nBarricade Health is currently: \(health)\n----------")
+        level = levelLoad
+        barricadeHealth = health
+    }
+    
+    func saveGameData()
+    {
+        NSUserDefaults.standardUserDefaults() .setObject(level, forKey: "level")
+        NSUserDefaults.standardUserDefaults() .setObject(barricadeHealth, forKey: "barricadeHealth")
+        NSUserDefaults.standardUserDefaults() .synchronize()
+        guard let _: Int = NSUserDefaults.standardUserDefaults() .objectForKey("level") as? Int
+            else{
+                print("Something went wrong when saving game data...\n!Unable to save game!")
+                return
+        }
+            print("Succesfully saved game data...")
+    }
+    
+    //Update game time
+    override func update(currentTime: NSTimeInterval) {
+        if (hasGameEnded == false)
+        {
+            if (numberOfBullets > 0)
+            {
+                updateBulletPosition()
+            }
+            if (shotsAt != nil)
+            {
+                if (allowedToFire == true)
+                {
+                    playerShoot(shotsAt!)
+                    allowedToFire = false
+                    NSTimer.scheduledTimerWithTimeInterval((currentGun?.shotSpeed)!, target: self, selector: "setFireToTrue", userInfo: nil, repeats: false)
+                }
+            }
+            bulletCollision()
+            moveZombies()
+            if (zombiesLeft <= 0 && hasGameEnded == false)
+            {
+                let endNode = SKLabelNode(text: "You have survived the night...")
+                endNode.fontSize = self.frame.width / 25
+                endNode.zPosition = 40
+                endNode.fontColor = UIColor.whiteColor()
+                endNode.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
+                addChild(endNode)
+                hasGameEnded = true
+                NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: "endGameWin", userInfo: nil, repeats: false)
+            }
+            if (movingPlayer == true)
+            {
+                if (isPlayerMoving == true)
+                {
+                    //do nothing
+                }
+                else
+                {
+                    isPlayerMoving = true
+                    NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "updateCharacterAnimation", userInfo: nil, repeats: false)
+                }
+            }
+            else
+            {
+                if (playerAnimateState != 0)
+                {
+                    playerAnimateState = 0
+                    updateCharacterTexture()
+                }
+            }
+        }
+        if (hasGameEnded == true)
+        {
+        }
+    }
+    
+    func updateCharacterAnimation()
+    {
+        if (playerAnimateState == 0)
+        {
+            playerAnimateState = 1
+        }
+        else if (playerAnimateState == 1)
+        {
+            playerAnimateState = 2
+        }
+        else if (playerAnimateState == 2)
+        {
+            //playerAnimateState = 3
+        }
+        else if (playerAnimateState == 3)
+        {
+            playerAnimateState = 2
+        }
+        
+        updateCharacterTexture()
+    }
+    
+    func updateCharacterTexture()
+    {
+        isPlayerMoving = false
+        if (playerAnimateState == 0)
+        {
+            playerNode.texture = SKTexture(imageNamed: "PlayerStill")
+        }
+        else
+        {
+            playerNode.texture = SKTexture(imageNamed: "PlayerMoving\(playerAnimateState)")
+        }
+    }
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+
+        let touch = touches.first
+        let point = touch!.locationInNode(self)
+        let node = nodeAtPoint(point)
+
+        if (node.name == "playerNode")
+        {
+            movingPlayer = true
+        }
+        else if (node.name == "switchGun")
+        {
+            let transferGun = currentGun
+            currentGun = secondaryGun
+            secondaryGun = transferGun
+            shotsRemaining = (currentGun?.ammoClip)!
+            NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
+        }
+        else
+        {
+            shotsAt = point
+        }
+        
+    }
+    
+    func setFireToTrue()
+    {
+        allowedToFire = true
+    }
+    
+    func endReload()
+    {
+        isReloading = false
+        shotsRemaining = (currentGun?.ammoClip)!
+        print("reloaded!")
+    }
+    
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        let touch = touches.first
+        let point = touch?.locationInNode(self)
+        if (shotsAt != nil)
+        {
+            shotsAt = point
+        }
+        if (movingPlayer == true)
+        {
+            if (point?.y > (((self.frame.height / 6) * 4) - (playerNode.frame.height / 2)))
+            {
+                playerNode.position.y = (((self.frame.height / 6) * 4) - (playerNode.frame.height / 2))
+            }
+            else if (point?.y < ((self.frame.height / 20) + (playerNode.frame.height / 2)))
+            {
+                playerNode.position.y = ((self.frame.height / 20) + (playerNode.frame.height / 2))
+            }
+            else
+            {
+                playerNode.position.y = (point?.y)!
+            }
+            playerNode.position.x = ((self.frame.size.width / 10) * 9) - ((playerNode.position.y / 2) + 20)
+        }
+    }
+    
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        let touch = touches.first
+        let point = touch?.locationInNode(self)
+        if (shotsAt != nil)
+        {
+            shotsAt = nil
+        }
+        if (movingPlayer == true)
+        {
+            movingPlayer = false
+        }
+
+    }
+
+    
+    func playerShoot(point: CGPoint)
+    {
+        shotsRemaining--
+        if (shotsRemaining <= 0 && isReloading == false)
+        {
+            isReloading = true
+            NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
+            print("reloading")
+        }
+
+        if (isReloading == true)
+        {
+            //RELOADING!
+        }
+        else
+        {
+            bulletNode.append(SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: playerNode.frame.width / 4, height: playerNode.frame.width / 4)))
+            bulletNode[numberOfBullets].position = CGPoint(x: playerNode.position.x - playerNode.frame.width / 2, y: playerNode.position.y + playerNode.frame.height / 4)
+            bulletNode[numberOfBullets].name = "bulletNode\(numberOfBullets)"
+            bulletNode[numberOfBullets].zPosition = 5;
+            //calculating bullet spread
+            var randomOffY: CGFloat = (CGFloat)(arc4random_uniform((UInt32)((currentGun?.spread)!)))
+            if (arc4random_uniform(2) == 1)
+            {
+                randomOffY -= (randomOffY * 2)
+            }
+        
+            let vecX = (point.x - playerNode.position.x)
+            let vecY = (point.y - playerNode.position.y)
+        
+            let vecAngle = atan2(vecX, vecY)
+        
+            let finalX = sin(vecAngle) * (CGFloat)((currentGun?.velocity)!)
+            let finalY = (cos(vecAngle) * (CGFloat)((currentGun?.velocity)!)) + randomOffY
+        
+            let vec = CGPoint(x: finalX, y: finalY)
+            bulletFireTo.append(vec)
+            bulletIsActive.append(true)
+            addChild(bulletNode[numberOfBullets])
+            print(vec)
+            numberOfBullets++
+        }
+    }
+    
+    
+    func updateBulletPosition()
+    {
+        for (var i = 0; i < numberOfBullets; i++)
+        {
+            bulletNode[i].position.x += bulletFireTo[i].x
+            bulletNode[i].position.y += bulletFireTo[i].y
+            if (bulletNode[i].position.x <= -(self.frame.width / 10))
+            {
+                removeBulletAt(i)
+            }
+        }
+    }
+    
+    func bulletCollision()
+    {
+        for (var i = 0; i < numberOfBullets; i++)
+        {
+            if (bulletIsActive[i])
+            {
+                for (var j = 0; j < numberOfZombies; j++)
+                {
+                    if (bulletNode[i].intersectsNode(zombieNodes[j]))
+                    {
+                            print("Bullet node '\(i)' intersects zombie node '\(j)' @ position '\(bulletNode[i].position), will attempt to delete bullet")
+                            if (bulletNode[i].position.y >= (zombieNodes[j].position.y + zombieNodes[j].frame.height / 4))
+                            {
+                                print("BOOM HEADSHOT!!!")
+                                zombieHealth[j] -= ((currentGun?.damage)! * 4)
+                            }
+                            else
+                            {
+                                zombieHealth[j] -= (currentGun?.damage)!
+                            }
+                            bulletNode[i].removeFromParent()
+                            bulletIsActive[i] = false
+                            if (zombieHealth[j] <= 0)
+                            {
+                                removeZombieAt(j)
+                                zombiesLeft--
+                                print("Zombie \(j) has been killed\nZombies remaining: \(zombiesLeft)")
+                            }
+                    }
+
+                }
+            }
+        }
+    }
+    
+    func updateHealth()
+    {
+        barricadeHealthNode.size.width = (((self.frame.width / 5) / 100) * (CGFloat)(barricadeHealth!))
+        if (barricadeHealth <= 25)
+        {
+            barricadeHealthNode.color = UIColor.redColor()
+        }
+        else if (barricadeHealth <= 60)
+        {
+            barricadeHealthNode.color = UIColor.orangeColor()
+        }
+        else
+        {
+            barricadeHealthNode.color = UIColor.greenColor()
+        }
+        if (barricadeHealth <= 0 && hasGameEnded == false)
+        {
+            hasGameEnded = true
+            endGameLose()
+            info.playerLost = true
+        }
+        print(barricadeHealth!)
+    }
+    
+    func removeHealth(healthDown: Double)
+    {
+        barricadeHealth! -= healthDown
+        updateHealth()
+    }
+    
+    func moveZombies()
+    {
+        for (var i = 0; i < numberOfZombies; i++)
+        {
+            if (zombieNodes[i].position.x >= ((self.barricadeNode.position.x - (self.barricadeNode.frame.width / 2)) - (self.zombieNodes[i].position.y / 10)))
+            {
+                    removeHealth((Double)((3 - (zombieClass[i].speed)) * 0.01))
+            }
+            else
+            {
+                zombieNodes[i].position.x += zombieClass[i].speed
+            }
+        }
+    }
+    
+    func endGameWin()
+    {
+        level!++
+        print("Level Completed... Next level: \(level!)")
+        saveGameData()
+        self.viewController?.navigationController?.popToRootViewControllerAnimated(true)
+        removeEverything()
+    }
+    func endGameLose()
+    {
+        NSUserDefaults.standardUserDefaults() .setObject(0, forKey: "level")
+        NSUserDefaults.standardUserDefaults() .setObject(100, forKey: "barricadeHealth")
+        NSUserDefaults.standardUserDefaults() .synchronize()
+        print("Player has lost!")
+        self.viewController?.navigationController?.popToRootViewControllerAnimated(true)
+        removeEverything()
+    }
+    
+    func removeZombieAt(number: Int)
+    {
+        zombieNodes[number].removeFromParent()
+        for (var r = number; r < numberOfZombies; r++)
+        {
+            if (r == numberOfZombies - 1)
+            {
+                zombieNodes.popLast()
+                zombieHealth.popLast()
+                zombieClass.popLast()
+            }
+            else
+            {
+                zombieNodes[r] = zombieNodes[r + 1]
+                zombieClass[r] = zombieClass[r + 1]
+                zombieHealth[r] = zombieHealth[r + 1]
+            }
+        }
+        numberOfZombies--
+    }
+    
+    func removeBulletAt(number: Int)
+    {
+        for (var r = number; r < numberOfBullets; r++)
+        {
+            if (r == numberOfBullets - 1)
+            {
+                //nothing
+                bulletNode.popLast()
+                bulletFireTo.popLast()
+                bulletIsActive.popLast()
+            }
+            else
+            {
+                bulletNode[r] = bulletNode[r + 1]
+                bulletFireTo[r] = bulletFireTo[r + 1]
+                bulletIsActive[r] = bulletIsActive[r + 1]
+            }
+        }
+        numberOfBullets--
+    }
+    func removeEverything()
+    {
+        for (var i = 0; i < numberOfZombies; i++)
+        {
+            zombieNodes[numberOfZombies - (i + 1)].removeFromParent()
+            zombieNodes.popLast()
+            zombieClass.popLast()
+            zombieHealth.popLast()
+            numberOfZombies = 0
+        }
+        for (var i = 0; i < numberOfBullets; i++)
+        {
+            bulletNode[numberOfBullets - (i + 1)].removeFromParent()
+            bulletNode.popLast()
+            bulletIsActive.popLast()
+            bulletFireTo.popLast()
+        }
+        playerNode.removeFromParent()
+        barricadeHealthNode.removeFromParent()
+        backgroundNode?.removeFromParent()
+        barricadeNode.removeFromParent()
+    }
+    
+}
