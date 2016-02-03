@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D00B19231C5576A600DBFB53 /* GainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00B19221C5576A600DBFB53 /* GainScreen.swift */; };
 		D014BDDF1C19055600A5B245 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D014BDDE1C19055600A5B245 /* AppDelegate.swift */; };
 		D014BDE41C19055600A5B245 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D014BDE21C19055600A5B245 /* Main.storyboard */; };
 		D014BDE61C19055600A5B245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D014BDE51C19055600A5B245 /* Assets.xcassets */; };
 		D014BDE91C19055600A5B245 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D014BDE71C19055600A5B245 /* LaunchScreen.storyboard */; };
 		D014BDF41C19055600A5B245 /* TravelZTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D014BDF31C19055600A5B245 /* TravelZTests.swift */; };
 		D014BDFF1C19055700A5B245 /* TravelZUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D014BDFE1C19055700A5B245 /* TravelZUITests.swift */; };
+		D04EA6EA1C38BF9B00A7C06C /* GunCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04EA6E81C38BF9B00A7C06C /* GunCollectionViewCell.swift */; };
+		D04EA6EB1C38BF9B00A7C06C /* GunCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04EA6E91C38BF9B00A7C06C /* GunCollectionViewCell.xib */; };
+		D04EA6ED1C3AADD900A7C06C /* GunScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04EA6EC1C3AADD900A7C06C /* GunScreen.swift */; };
 		D0A459261C1F35B40000802B /* MainMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A459251C1F35B40000802B /* MainMenuVC.swift */; };
 		D0A459281C1F38B50000802B /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A459271C1F38B50000802B /* GameVC.swift */; };
 		D0D4782B1C1B32590028BB36 /* GameScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D4782A1C1B32590028BB36 /* GameScreen.swift */; };
@@ -38,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D00B19221C5576A600DBFB53 /* GainScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GainScreen.swift; sourceTree = "<group>"; };
 		D014BDDB1C19055600A5B245 /* TravelZ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelZ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D014BDDE1C19055600A5B245 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D014BDE31C19055600A5B245 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -50,6 +55,9 @@
 		D014BDFA1C19055700A5B245 /* TravelZUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TravelZUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D014BDFE1C19055700A5B245 /* TravelZUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelZUITests.swift; sourceTree = "<group>"; };
 		D014BE001C19055700A5B245 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D04EA6E81C38BF9B00A7C06C /* GunCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GunCollectionViewCell.swift; sourceTree = "<group>"; };
+		D04EA6E91C38BF9B00A7C06C /* GunCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GunCollectionViewCell.xib; sourceTree = "<group>"; };
+		D04EA6EC1C3AADD900A7C06C /* GunScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GunScreen.swift; sourceTree = "<group>"; };
 		D0A459251C1F35B40000802B /* MainMenuVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuVC.swift; sourceTree = "<group>"; };
 		D0A459271C1F38B50000802B /* GameVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameVC.swift; sourceTree = "<group>"; };
 		D0D4782A1C1B32590028BB36 /* GameScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScreen.swift; sourceTree = "<group>"; };
@@ -82,6 +90,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D00B19211C55768E00DBFB53 /* GainScreen */ = {
+			isa = PBXGroup;
+			children = (
+				D00B19221C5576A600DBFB53 /* GainScreen.swift */,
+			);
+			name = GainScreen;
+			sourceTree = "<group>";
+		};
 		D014BDD21C19055600A5B245 = {
 			isa = PBXGroup;
 			children = (
@@ -105,6 +121,7 @@
 		D014BDDD1C19055600A5B245 /* TravelZ */ = {
 			isa = PBXGroup;
 			children = (
+				D04EA6E71C38BF1C00A7C06C /* CollectionView Cells */,
 				D0F6A5EA1C2334A0005347AD /* PLists */,
 				D0F6A5E61C233464005347AD /* ViewControllers */,
 				D0F6A5E91C233491005347AD /* Storyboards */,
@@ -134,9 +151,28 @@
 			path = TravelZUITests;
 			sourceTree = "<group>";
 		};
+		D04EA6E71C38BF1C00A7C06C /* CollectionView Cells */ = {
+			isa = PBXGroup;
+			children = (
+				D04EA6E81C38BF9B00A7C06C /* GunCollectionViewCell.swift */,
+				D04EA6E91C38BF9B00A7C06C /* GunCollectionViewCell.xib */,
+			);
+			name = "CollectionView Cells";
+			sourceTree = "<group>";
+		};
+		D04EA6EE1C3AADE300A7C06C /* GunScreen */ = {
+			isa = PBXGroup;
+			children = (
+				D04EA6EC1C3AADD900A7C06C /* GunScreen.swift */,
+			);
+			name = GunScreen;
+			sourceTree = "<group>";
+		};
 		D0F6A5E61C233464005347AD /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				D00B19211C55768E00DBFB53 /* GainScreen */,
+				D04EA6EE1C3AADE300A7C06C /* GunScreen */,
 				D0F6A5E81C233486005347AD /* MainMenu */,
 				D0F6A5E71C23347C005347AD /* Game */,
 			);
@@ -187,6 +223,7 @@
 				D014BDD71C19055600A5B245 /* Sources */,
 				D014BDD81C19055600A5B245 /* Frameworks */,
 				D014BDD91C19055600A5B245 /* Resources */,
+				D04EA6EF1C40D2BE00A7C06C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -283,6 +320,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D014BDE91C19055600A5B245 /* LaunchScreen.storyboard in Resources */,
+				D04EA6EB1C38BF9B00A7C06C /* GunCollectionViewCell.xib in Resources */,
 				D014BDE61C19055600A5B245 /* Assets.xcassets in Resources */,
 				D014BDE41C19055600A5B245 /* Main.storyboard in Resources */,
 				D0F6A5EC1C2334C8005347AD /* SaveInfo.plist in Resources */,
@@ -305,6 +343,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		D04EA6EF1C40D2BE00A7C06C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run 30d74ba974cd31e1fe0a4b4360e97d5fd5904941 b1be5ffd46f91391a17ee641caf7a5022c1fd792597a23dcc446d2d24a6e999b";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		D014BDD71C19055600A5B245 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -312,8 +366,11 @@
 			files = (
 				D014BDDF1C19055600A5B245 /* AppDelegate.swift in Sources */,
 				D0D4782B1C1B32590028BB36 /* GameScreen.swift in Sources */,
+				D00B19231C5576A600DBFB53 /* GainScreen.swift in Sources */,
 				D0A459281C1F38B50000802B /* GameVC.swift in Sources */,
+				D04EA6EA1C38BF9B00A7C06C /* GunCollectionViewCell.swift in Sources */,
 				D0A459261C1F35B40000802B /* MainMenuVC.swift in Sources */,
+				D04EA6ED1C3AADD900A7C06C /* GunScreen.swift in Sources */,
 				D0F6A5E51C233405005347AD /* InfoCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -458,6 +515,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/TravelZ",
+				);
 				INFOPLIST_FILE = TravelZ/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -473,6 +534,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/TravelZ",
+				);
 				INFOPLIST_FILE = TravelZ/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

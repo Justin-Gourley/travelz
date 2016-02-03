@@ -14,6 +14,7 @@ class GameScreen: SKScene {
     
     var color: [UIColor] = [UIColor.redColor(), UIColor.blueColor(), UIColor.brownColor(), UIColor.yellowColor(), UIColor.whiteColor()]
     var level: Int?
+    var levelStage: Int?
     var bulletNode: [SKNode] = []
     var bulletFireTo: [CGPoint] = []
     var numberOfBullets = 0
@@ -29,6 +30,9 @@ class GameScreen: SKScene {
     var numberOfZombies: Int = 0
     var zombieHealth: [Double] = []
     var zombieNodes: [SKSpriteNode] = []
+    var zombieAnimationTick: [Int] = []
+    var isZombieAnimating: [Bool] = []
+    var isZombieAttacking: [Bool] = []
     var zombieClass: [zombieType] = []
     var isReloading = false
     var shotsRemaining = 0
@@ -40,6 +44,8 @@ class GameScreen: SKScene {
     var barricadeHealthNode: SKSpriteNode!
     var setAttackBack: [Int] = []
     var backgroundNode: SKSpriteNode?
+    var ammoNode: SKSpriteNode?
+    var ammoLabelNode: SKLabelNode?
     
     var currentGun: guns?
     var secondaryGun: guns?
@@ -52,7 +58,7 @@ class GameScreen: SKScene {
         let type: String
         var damage: Double
         var velocity: Double
-        var spread: Int
+        var spread: Double
         var shotSpeed: Double
         var ammoClip: Int
         var reloadTime: Double
@@ -63,14 +69,14 @@ class GameScreen: SKScene {
         var speed: CGFloat
         var type: String
         var canAttack: Bool
+        var animationState: Int
     }
     
     override func didMoveToView(view: SKView) {
         self.view?.showsNodeCount = true
         self.view?.showsFPS = true
 
-        currentGun = guns.init(name: "pistolDefault", type: "pistol", damage: 20, velocity: 100, spread: 2, shotSpeed: 0.3, ammoClip: 10, reloadTime: 2.5)
-        secondaryGun = guns.init(name: "machineGunDefault", type: "machineGun", damage: 50, velocity: 75, spread: 5, shotSpeed: 0.1, ammoClip: 30, reloadTime: 0)
+        loadGuns()
         shotsRemaining = (currentGun?.ammoClip)!
         loadGameData()
         if (level == nil)
@@ -93,25 +99,46 @@ class GameScreen: SKScene {
         backgroundNode!.name  = "background"
         backgroundNode?.zPosition = 1
         addChild(backgroundNode!)
-
+        print("\(currentGun?.name)")
         
         //create player node
-        playerNode = SKSpriteNode(texture: SKTexture(imageNamed: "PlayerStill"), color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width/15, height: self.frame.height/8))
+        playerNode = SKSpriteNode(texture: SKTexture(imageNamed: "PlayerStill-\(currentGun!.name)"), color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width/15, height: self.frame.height/6))
         playerNode.position = CGPoint(x: ((self.frame.size.width / 10) * 9), y: self.frame.height / 2)
         playerNode.position.x = ((self.frame.size.width / 10) * 9) - ((playerNode.position.y / 2) + 20)
         playerNode.name = "playerNode"
-        playerNode.zPosition = 10
+        playerNode.zPosition = 1000
         addChild(playerNode)
+        
+        ammoNode = SKSpriteNode(color: UIColor.grayColor(), size: CGSize(width: self.frame.size.width/4, height: self.frame.size.height / 10))
+        ammoNode?.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 10 * 9)
+        ammoNode?.name = "ammoNode"
+        ammoNode?.zPosition = 1011
+        addChild(ammoNode!)
+        
+        let backgroundAmmoNode = SKSpriteNode(color: UIColor.darkGrayColor(), size: CGSize(width: self.frame.size.width/4, height: self.frame.size.height / 10))
+        backgroundAmmoNode.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 10 * 9)
+        backgroundAmmoNode.name = "ammoBackgroundNode"
+        backgroundAmmoNode.zPosition = 1010
+        addChild(backgroundAmmoNode)
+        
+        ammoLabelNode = SKLabelNode(text: "\(shotsRemaining)/\(currentGun!.ammoClip)")
+        ammoLabelNode?.fontColor = UIColor.whiteColor()
+        ammoLabelNode?.fontSize = (ammoNode!.size.width / 10)
+        ammoLabelNode?.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 20 * 18)
+        ammoLabelNode?.name = "ammoLabelNode"
+        ammoLabelNode?.zPosition = 1015
+        addChild(ammoLabelNode!)
+        
         
         barricadeNode = SKSpriteNode(texture: SKTexture(imageNamed: "BarricadeFull"), color: UIColor.whiteColor(), size: CGSize(width: self.frame.width / 10, height: (self.frame.height / 6) * 4))
         barricadeNode.position = CGPoint(x: (self.frame.width / 20) * 12, y: (self.frame.height / 2 - self.barricadeNode.frame.height / 4))
         barricadeNode.name = "barricadeNode"
-        barricadeNode.zPosition = 10
+        barricadeNode.zPosition = 1000
         addChild(barricadeNode)
         
         barricadeHealthNode = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: self.frame.size.width / 5, height: self.frame.size.height / 10))
         barricadeHealthNode.position = CGPoint(x: self.frame.width / 2, y: ((self.frame.height / 10) * 9))
-        barricadeHealthNode.zPosition = 15
+        barricadeHealthNode.zPosition = 1500
         barricadeHealthNode.name = "healthBarNode"
         addChild(barricadeHealthNode)
         
@@ -120,7 +147,7 @@ class GameScreen: SKScene {
         let switchGunNode = SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: self.frame.size.width / 6,height: self.frame.size.height / 10))
         switchGunNode.position = CGPoint(x: ((self.frame.size.width / 10) * 9), y: ((self.frame.size.height / 10) * 9))
         switchGunNode.name = "switchGun"
-        switchGunNode.zPosition = 10
+        switchGunNode.zPosition = 1000
         addChild(switchGunNode)
         
         createZombies()
@@ -129,15 +156,21 @@ class GameScreen: SKScene {
     
     func createZombies()
     {
-        let randomNum: UInt32 = (UInt32)((level! + 1) * 10)
-        let random = arc4random_uniform(randomNum) + 25
+        let randomNum: UInt32 = (UInt32)((level! + 1) * levelStage!)
+        let random = arc4random_uniform(randomNum) + 10
         numberOfZombies = (Int)(random)
         zombiesLeft = numberOfZombies
         print("Number of zombies spawned for level: \(numberOfZombies)")
         for (var i = 0; i < numberOfZombies; i++)
         {
             zombieHealth.append(100)
-            let node = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+            isZombieAttacking.append(false)
+            let ranTick = arc4random_uniform(10) + 1
+            zombieAnimationTick.append((Int)(ranTick))
+            isZombieAnimating.append(false)
+            let ran = (Int)(arc4random_uniform(3) + 1)
+            let texture = SKTexture(imageNamed: "zombie_pos_\(ran)")
+            let node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
             var randomX: CGFloat = 0
             if (i < 6)
             {
@@ -148,14 +181,14 @@ class GameScreen: SKScene {
                 randomX = (CGFloat)(arc4random_uniform(1000))
             }
             node.position = CGPoint(x: -(randomX), y: (CGFloat)((arc4random_uniform((UInt32)(((self.frame.height / 6) * 4) - (playerNode.frame.height / 2)))) + (UInt32)(self.frame.height / 20)))
-            node.zPosition = 8
+            node.zPosition = node.position.y
             zombieNodes.append(node)
             let speedRandom = arc4random_uniform(2) + 1
             if (speedRandom < 1)
             {
                 print("A Zombie is broken.... he wont move?!?!?")
             }
-            zombieClass.append(zombieType.init(speed: (CGFloat)(speedRandom), type: "normal", canAttack: true))
+            zombieClass.append(zombieType.init(speed: (CGFloat)(speedRandom), type: "normal", canAttack: true, animationState: (Int)(ran)))
             addChild(zombieNodes[i])
         }
     }
@@ -165,18 +198,32 @@ class GameScreen: SKScene {
         guard let levelLoad: Int = NSUserDefaults.standardUserDefaults() .objectForKey("level") as? Int
             else {
                 print("unable to load level... setting level to 0")
-                level = 0
+                setToDefault()
                 return
         }
         guard let health: Double = NSUserDefaults.standardUserDefaults() .objectForKey("barricadeHealth") as? Double
             else {
                 print("Unable to load barricade health... setting health to 100")
-                barricadeHealth = 100
+                setToDefault()
+                return
+        }
+        guard let stageLoad: Int = NSUserDefaults.standardUserDefaults() .objectForKey("levelStage") as? Int
+            else {
+                print("Unable to load stageLoad... setting stage to 1")
+                setToDefault()
                 return
         }
         print("----------\nSave loaded:\nPlayer is on level: \(levelLoad)\nBarricade Health is currently: \(health)\n----------")
         level = levelLoad
         barricadeHealth = health
+        levelStage = stageLoad
+    }
+    
+    func setToDefault()
+    {
+        levelStage = 1
+        level = 0
+        barricadeHealth = 100
     }
     
     func saveGameData()
@@ -209,18 +256,34 @@ class GameScreen: SKScene {
                     NSTimer.scheduledTimerWithTimeInterval((currentGun?.shotSpeed)!, target: self, selector: "setFireToTrue", userInfo: nil, repeats: false)
                 }
             }
-            bulletCollision()
             moveZombies()
             if (zombiesLeft <= 0 && hasGameEnded == false)
             {
                 let endNode = SKLabelNode(text: "You have survived the night...")
                 endNode.fontSize = self.frame.width / 25
-                endNode.zPosition = 40
+                endNode.zPosition = 9999
                 endNode.fontColor = UIColor.whiteColor()
                 endNode.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
                 addChild(endNode)
                 hasGameEnded = true
                 NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: "endGameWin", userInfo: nil, repeats: false)
+            }
+            for (var i = 0; i < zombiesLeft; i++)
+            {
+                if (isZombieAnimating[i] == false)
+                {
+                    isZombieAnimating[i] = true
+                    updateZombieAnimation(i)
+                }
+                else
+                {
+                    zombieAnimationTick[i]++
+                    if (zombieAnimationTick[i] >= 10)
+                    {
+                        zombieAnimationTick[i] = 0
+                        isZombieAnimating[i] = false
+                    }
+                }
             }
             if (movingPlayer == true)
             {
@@ -248,6 +311,28 @@ class GameScreen: SKScene {
         }
     }
     
+    func updateZombieAnimation(zombieNum: Int)
+    {
+        if (isZombieAttacking[zombieNum] == false)
+        {
+            zombieClass[zombieNum].animationState++
+            if (zombieClass[zombieNum].animationState > 3)
+            {
+                zombieClass[zombieNum].animationState = 1
+            }
+            zombieNodes[zombieNum].texture = SKTexture(imageNamed: "zombie_pos_\(zombieClass[zombieNum].animationState)")
+        }
+        else
+        {
+            zombieClass[zombieNum].animationState++
+            if (zombieClass[zombieNum].animationState > 3)
+            {
+                zombieClass[zombieNum].animationState = 1
+            }
+            zombieNodes[zombieNum].texture = SKTexture(imageNamed: "zombie_attack_\(zombieClass[zombieNum].animationState)")
+        }
+    }
+    
     func updateCharacterAnimation()
     {
         if (playerAnimateState == 0)
@@ -260,7 +345,7 @@ class GameScreen: SKScene {
         }
         else if (playerAnimateState == 2)
         {
-            //playerAnimateState = 3
+            playerAnimateState = 3
         }
         else if (playerAnimateState == 3)
         {
@@ -275,11 +360,25 @@ class GameScreen: SKScene {
         isPlayerMoving = false
         if (playerAnimateState == 0)
         {
-            playerNode.texture = SKTexture(imageNamed: "PlayerStill")
+            if (currentGun?.type == "Pistol" || currentGun?.type == "Sniper Rifle")
+            {
+                playerNode.texture = SKTexture(imageNamed: "PlayerStill-Colt45")
+            }
+            else
+            {
+                playerNode.texture = SKTexture(imageNamed: "PlayerStill-AK-47")
+            }
         }
         else
         {
-            playerNode.texture = SKTexture(imageNamed: "PlayerMoving\(playerAnimateState)")
+            if (currentGun?.type == "Pistol" || currentGun?.type == "Sniper Rifle")
+            {
+                playerNode.texture = SKTexture(imageNamed: "PlayerMoving\(playerAnimateState)-Colt45")
+            }
+            else
+            {
+                playerNode.texture = SKTexture(imageNamed: "PlayerMoving\(playerAnimateState)-AK-47")
+            }
         }
     }
     
@@ -295,11 +394,19 @@ class GameScreen: SKScene {
         }
         else if (node.name == "switchGun")
         {
-            let transferGun = currentGun
-            currentGun = secondaryGun
-            secondaryGun = transferGun
-            shotsRemaining = (currentGun?.ammoClip)!
-            NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
+            if (secondaryGun != nil)
+            {
+                let transferGun = currentGun
+                currentGun = secondaryGun
+                secondaryGun = transferGun
+                shotsRemaining = (currentGun?.ammoClip)!
+                updateCharacterTexture()
+                NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
+            }
+            else
+            {
+                print("unable to load secondary gun as there is no secondary gun equiped...")
+            }
         }
         else
         {
@@ -317,7 +424,7 @@ class GameScreen: SKScene {
     {
         isReloading = false
         shotsRemaining = (currentGun?.ammoClip)!
-        print("reloaded!")
+        updateAmmo()
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -363,11 +470,12 @@ class GameScreen: SKScene {
     func playerShoot(point: CGPoint)
     {
         shotsRemaining--
+        updateAmmo()
         if (shotsRemaining <= 0 && isReloading == false)
         {
             isReloading = true
             NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
-            print("reloading")
+            ammoLabelNode?.text = "Reloading..."
         }
 
         if (isReloading == true)
@@ -399,7 +507,6 @@ class GameScreen: SKScene {
             bulletFireTo.append(vec)
             bulletIsActive.append(true)
             addChild(bulletNode[numberOfBullets])
-            print(vec)
             numberOfBullets++
         }
     }
@@ -409,8 +516,12 @@ class GameScreen: SKScene {
     {
         for (var i = 0; i < numberOfBullets; i++)
         {
-            bulletNode[i].position.x += bulletFireTo[i].x
-            bulletNode[i].position.y += bulletFireTo[i].y
+            for (var j = 0; j < 10; j++)
+            {
+                bulletNode[i].position.x += (bulletFireTo[i].x / 10)
+                bulletNode[i].position.y += (bulletFireTo[i].y / 10)
+                bulletCollision()
+            }
             if (bulletNode[i].position.x <= -(self.frame.width / 10))
             {
                 removeBulletAt(i)
@@ -432,7 +543,7 @@ class GameScreen: SKScene {
                             if (bulletNode[i].position.y >= (zombieNodes[j].position.y + zombieNodes[j].frame.height / 4))
                             {
                                 print("BOOM HEADSHOT!!!")
-                                zombieHealth[j] -= ((currentGun?.damage)! * 4)
+                                zombieHealth[j] -= ((currentGun?.damage)! * 2)
                             }
                             else
                             {
@@ -474,7 +585,6 @@ class GameScreen: SKScene {
             endGameLose()
             info.playerLost = true
         }
-        print(barricadeHealth!)
     }
     
     func removeHealth(healthDown: Double)
@@ -489,6 +599,7 @@ class GameScreen: SKScene {
         {
             if (zombieNodes[i].position.x >= ((self.barricadeNode.position.x - (self.barricadeNode.frame.width / 2)) - (self.zombieNodes[i].position.y / 10)))
             {
+                isZombieAttacking[i] = true
                     removeHealth((Double)((3 - (zombieClass[i].speed)) * 0.01))
             }
             else
@@ -500,7 +611,7 @@ class GameScreen: SKScene {
     
     func endGameWin()
     {
-        level!++
+        //level!++
         print("Level Completed... Next level: \(level!)")
         saveGameData()
         self.viewController?.navigationController?.popToRootViewControllerAnimated(true)
@@ -512,7 +623,7 @@ class GameScreen: SKScene {
         NSUserDefaults.standardUserDefaults() .setObject(100, forKey: "barricadeHealth")
         NSUserDefaults.standardUserDefaults() .synchronize()
         print("Player has lost!")
-        self.viewController?.navigationController?.popToRootViewControllerAnimated(true)
+        self.viewController?.navigationController?.popViewControllerAnimated(true)
         removeEverything()
     }
     
@@ -579,5 +690,92 @@ class GameScreen: SKScene {
         backgroundNode?.removeFromParent()
         barricadeNode.removeFromParent()
     }
+    
+    func updateAmmo()
+    {
+        ammoLabelNode?.text = "\(shotsRemaining)/\(currentGun!.ammoClip)"
+        if (shotsRemaining < 0)
+        {ammoLabelNode?.text = "0/\(currentGun!.ammoClip)"
+        shotsRemaining = 0}
+        let thing: CGFloat = (CGFloat)(shotsRemaining)/(CGFloat)(currentGun!.ammoClip)
+        ammoNode?.size.width = ((self.frame.size.width/4) * thing)
+        ammoNode?.position.x = (self.frame.width / 10 + self.frame.size.width/8) - (((self.frame.size.width/4) - ammoNode!.size.width) / 2)
+        print("AmmoNode width: \(ammoNode?.size.width)..... shots remaining: \(thing)")
+    }
+    
+    //-----Loading-----
+    func loadGuns()
+    {
+        let gunName: [String] = loadString("gunName")
+        let gunType: [String] = loadString("gunType")
+        let gunDamage: [Double] = loadDouble("gunDamage")
+        let gunVelocity: [Double] = loadDouble("gunVelocity")
+        let gunSpread: [Double] = loadDouble("gunSpread")
+        let gunShotSpeed: [Double] = loadDouble("gunShotSpeed")
+        let gunAmmo: [Double] = loadDouble("gunAmmo")
+        let gunReload: [Double] = loadDouble("gunReload")
+        var descoveredGuns: [guns] = []
+        for (var i = 0; i < gunName.count; i++)
+        {
+            descoveredGuns.append(guns.init(name: gunName[i], type: gunType[i], damage: gunDamage[i], velocity: gunVelocity[i], spread: gunSpread[i], shotSpeed: gunShotSpeed[i], ammoClip: (Int)(gunAmmo[i]), reloadTime: gunReload[i]))
+        }
+        
+        let curGun1 = loadGunSlot("gunSlot1")
+        let curGun2 = loadGunSlot("gunSlot2")
+        
+        if (curGun1 >= 0)
+        {
+            currentGun = descoveredGuns[curGun1]
+        }
+        if (curGun2 >= 0)
+        {
+            secondaryGun = descoveredGuns[curGun2]
+        }
+        if (currentGun == nil && secondaryGun != nil)
+        {
+            currentGun = secondaryGun
+            secondaryGun = nil
+        }
+        if (currentGun == nil && secondaryGun == nil)
+        {
+            currentGun = guns.init(name: "pistolDefault", type: "pistol", damage: 20, velocity: 100, spread: 2, shotSpeed: 0.3, ammoClip: 10, reloadTime: 2.5)
+            print("No guns equiped? Backup pistol equiped...")
+        }
+        
+        print("Loaded gun slot 1: [\(currentGun)]")
+        print("Loaded gun slot 2: [\(secondaryGun)]")
+
+        print("Completed Gun Load...")
+    } 
+    func loadGunSlot(object: String) -> Int
+    {
+        guard let gun = NSUserDefaults.standardUserDefaults() .objectForKey("\(object)") as? Int
+            else
+        {
+            print("unable to load \(object)")
+            return -1
+        }
+        return gun
+    }
+    //loading funcs
+    func loadString(object: String) -> [String]
+    {
+        guard let stringArray: [String] = NSUserDefaults.standardUserDefaults() .objectForKey("\(object)") as? [String]
+            else {
+                print("Unable to load \(object)")
+                return []
+        }
+        return stringArray
+    }
+    func loadDouble(object: String) -> [Double]
+    {
+        guard let doubleArray: [Double] = NSUserDefaults.standardUserDefaults() .objectForKey("\(object)") as? [Double]
+            else {
+                print("Unable to load \(object)")
+                return []
+        }
+        return doubleArray
+    }
+    //----/Loading-----
     
 }

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="gunCell" id="gTV-IL-0wX" customClass="GunCollectionViewCell" customModule="TravelZ" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="500" height="100"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="500" height="100"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cjd-Pb-nec">
+                        <rect key="frame" x="0.0" y="0.0" width="150" height="100"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="cjd-Pb-nec" secondAttribute="height" multiplier="1.5" id="dyK-Re-egg"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gun Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="izR-qd-oIw">
+                        <rect key="frame" x="150" y="0.0" width="350" height="25"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gun Description" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iFC-Th-i9G">
+                        <rect key="frame" x="150" y="25" width="350" height="75"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qgi-Ra-yC0" userLabel="equipedImage">
+                        <rect key="frame" x="450" y="25" width="50" height="75"/>
+                    </imageView>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <constraints>
+                <constraint firstItem="iFC-Th-i9G" firstAttribute="height" secondItem="gTV-IL-0wX" secondAttribute="height" multiplier="0.75" id="4dn-hM-lkh"/>
+                <constraint firstItem="iFC-Th-i9G" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" multiplier="0.7" id="5HA-ad-Spx"/>
+                <constraint firstAttribute="trailing" secondItem="izR-qd-oIw" secondAttribute="trailing" id="DUT-Rq-kE3"/>
+                <constraint firstItem="cjd-Pb-nec" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="G6e-f6-o5p"/>
+                <constraint firstItem="izR-qd-oIw" firstAttribute="height" secondItem="gTV-IL-0wX" secondAttribute="height" multiplier="0.25" id="HHh-7f-74x"/>
+                <constraint firstItem="iFC-Th-i9G" firstAttribute="leading" secondItem="cjd-Pb-nec" secondAttribute="trailing" id="Jx5-bN-ja6"/>
+                <constraint firstItem="qgi-Ra-yC0" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" multiplier="0.1" id="ND9-mV-pow"/>
+                <constraint firstItem="izR-qd-oIw" firstAttribute="leading" secondItem="cjd-Pb-nec" secondAttribute="trailing" id="NwJ-JE-Usl"/>
+                <constraint firstAttribute="trailing" secondItem="qgi-Ra-yC0" secondAttribute="trailing" id="Vy2-LZ-mPX"/>
+                <constraint firstItem="qgi-Ra-yC0" firstAttribute="top" secondItem="izR-qd-oIw" secondAttribute="bottom" id="XOj-b7-yGz"/>
+                <constraint firstAttribute="bottom" secondItem="qgi-Ra-yC0" secondAttribute="bottom" id="fV3-2c-6Ks"/>
+                <constraint firstItem="cjd-Pb-nec" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" multiplier="0.3" id="fgY-HK-1Ps"/>
+                <constraint firstItem="iFC-Th-i9G" firstAttribute="top" secondItem="izR-qd-oIw" secondAttribute="bottom" id="gOh-Sg-TwA"/>
+                <constraint firstItem="cjd-Pb-nec" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="wrC-6Q-5T5"/>
+                <constraint firstItem="izR-qd-oIw" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="x3C-RI-8QX"/>
+            </constraints>
+            <size key="customSize" width="500" height="100"/>
+            <connections>
+                <outlet property="equiped" destination="qgi-Ra-yC0" id="MTe-0s-h1o"/>
+                <outlet property="gunDescription" destination="iFC-Th-i9G" id="8yk-z0-irF"/>
+                <outlet property="gunImage" destination="cjd-Pb-nec" id="zPZ-er-pAU"/>
+                <outlet property="gunName" destination="izR-qd-oIw" id="W9G-G1-hEd"/>
+            </connections>
+            <point key="canvasLocation" x="550" y="333"/>
+        </collectionViewCell>
+    </objects>
+</document>

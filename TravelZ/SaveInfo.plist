@@ -2,11 +2,77 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>levelStage</key>
+	<integer>1</integer>
 	<key>level</key>
 	<integer>0</integer>
 	<key>barricadeHealth</key>
 	<integer>100</integer>
-	<key>guns</key>
-	<array/>
+	<key>gunName</key>
+	<array>
+		<string>M9</string>
+		<string>AK-47</string>
+		<string>AWP</string>
+	</array>
+	<key>gunType</key>
+	<array>
+		<string>Pistol</string>
+		<string>Assault Rifle</string>
+		<string>Sniper Rifle</string>
+	</array>
+	<key>gunDescription</key>
+	<array>
+		<string>Pistol</string>
+		<string>Assault Rifle</string>
+		<string>Sniper Rifle</string>
+	</array>
+	<key>gunDamage</key>
+	<array>
+		<integer>20</integer>
+		<real>50</real>
+		<integer>100</integer>
+	</array>
+	<key>gunVelocity</key>
+	<array>
+		<integer>100</integer>
+		<integer>50</integer>
+		<integer>125</integer>
+	</array>
+	<key>gunSpread</key>
+	<array>
+		<integer>2</integer>
+		<integer>5</integer>
+		<integer>1</integer>
+	</array>
+	<key>gunShotSpeed</key>
+	<array>
+		<real>0.3</real>
+		<real>0.1</real>
+		<real>0.8</real>
+	</array>
+	<key>gunAmmo</key>
+	<array>
+		<integer>10</integer>
+		<integer>30</integer>
+		<integer>5</integer>
+	</array>
+	<key>gunReload</key>
+	<array>
+		<integer>2</integer>
+		<real>3.5</real>
+		<integer>4</integer>
+	</array>
+	<key>gunUnlocked</key>
+	<array>
+		<true/>
+		<true/>
+		<true/>
+	</array>
+	<key>gunSlot1</key>
+	<integer>0</integer>
+	<key>gunSlot2</key>
+	<integer>-1</integer>
+	<key>crewCount</key>
+	<integer>0</integer>
 </dict>
 </plist>
