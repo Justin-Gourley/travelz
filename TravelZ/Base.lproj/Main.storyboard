@@ -60,85 +60,23 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kOi-34-kXl" userLabel="repairPoints">
-                                <rect key="frame" x="295" y="459" width="11" height="21"/>
+                                <rect key="frame" x="403" y="459" width="11" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XvZ-ar-05v" userLabel="crewPoints">
-                                <rect key="frame" x="294" y="339" width="11" height="21"/>
+                                <rect key="frame" x="403" y="339" width="11" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vpj-dJ-uWB" userLabel="supplyPoints">
-                                <rect key="frame" x="294" y="219" width="11" height="21"/>
+                                <rect key="frame" x="403" y="219" width="11" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mgl-cE-Cb0" userLabel="weaponPoints">
-                                <rect key="frame" x="294" y="99" width="11" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ubY-3F-L4b" userLabel="repairAdd">
-                                <rect key="frame" x="315" y="455" width="30" height="30"/>
-                                <state key="normal" title="&gt;"/>
-                                <connections>
-                                    <action selector="repairAdd:" destination="udQ-LT-44F" eventType="touchUpInside" id="Dxy-aO-3YZ"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zj2-mP-F5m" userLabel="repairSub">
-                                <rect key="frame" x="255" y="455" width="30" height="30"/>
-                                <state key="normal" title="&lt;"/>
-                                <connections>
-                                    <action selector="repairSub:" destination="udQ-LT-44F" eventType="touchUpInside" id="qpW-XP-Mwv"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sgc-PL-l6h" userLabel="crewAdd">
-                                <rect key="frame" x="315" y="335" width="30" height="30"/>
-                                <state key="normal" title="&gt;"/>
-                                <connections>
-                                    <action selector="crewAdd:" destination="udQ-LT-44F" eventType="touchUpInside" id="Fp5-4K-WWw"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Fi-fX-nGt" userLabel="crewSub">
-                                <rect key="frame" x="255" y="335" width="30" height="30"/>
-                                <state key="normal" title="&lt;"/>
-                                <connections>
-                                    <action selector="crewSub:" destination="udQ-LT-44F" eventType="touchUpInside" id="SRz-z0-1QE"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pfz-dM-YuH" userLabel="supplyAdd">
-                                <rect key="frame" x="315" y="215" width="30" height="30"/>
-                                <state key="normal" title="&gt;"/>
-                                <connections>
-                                    <action selector="supplyAdd:" destination="udQ-LT-44F" eventType="touchUpInside" id="BMX-xP-frf"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n61-lk-YMS" userLabel="supplySub">
-                                <rect key="frame" x="255" y="215" width="30" height="30"/>
-                                <state key="normal" title="&lt;"/>
-                                <connections>
-                                    <action selector="supplySub:" destination="udQ-LT-44F" eventType="touchUpInside" id="RXc-Pd-c0f"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gAe-6c-ZFn" userLabel="weaponAdd">
-                                <rect key="frame" x="315" y="95" width="30" height="30"/>
-                                <state key="normal" title="&gt;"/>
-                                <connections>
-                                    <action selector="weaponAdd:" destination="udQ-LT-44F" eventType="touchUpInside" id="BQb-9p-S7P"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KNu-Eu-3Wb" userLabel="weaponSub">
-                                <rect key="frame" x="255" y="95" width="30" height="30"/>
-                                <state key="normal" title="&lt;"/>
-                                <connections>
-                                    <action selector="weaponSub:" destination="udQ-LT-44F" eventType="touchUpInside" id="cRJ-zw-3RG"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Points: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E9e-ca-9oW">
                                 <rect key="frame" x="272" y="20" width="57" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -152,69 +90,111 @@
                                     <action selector="goToGame:" destination="udQ-LT-44F" eventType="touchUpInside" id="qXE-rx-Qy0"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mgl-cE-Cb0" userLabel="weaponPoints">
+                                <rect key="frame" x="403" y="99" width="11" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Qu2-tt-ZYf">
+                                <rect key="frame" x="236" y="95" width="128" height="31"/>
+                                <connections>
+                                    <action selector="weaponSliderUpdate:" destination="udQ-LT-44F" eventType="valueChanged" id="55l-WV-fOw"/>
+                                </connections>
+                            </slider>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="xSM-Dq-HLg">
+                                <rect key="frame" x="236" y="215" width="128" height="31"/>
+                                <connections>
+                                    <action selector="supplySliderUpdate:" destination="udQ-LT-44F" eventType="valueChanged" id="179-qy-XNh"/>
+                                </connections>
+                            </slider>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Qfw-we-fvP">
+                                <rect key="frame" x="236" y="455" width="128" height="31"/>
+                                <connections>
+                                    <action selector="repairSliderUpdate:" destination="udQ-LT-44F" eventType="valueChanged" id="Ty0-yM-O5v"/>
+                                </connections>
+                            </slider>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="UgC-uH-uf4">
+                                <rect key="frame" x="236" y="335" width="128" height="31"/>
+                                <connections>
+                                    <action selector="crewSliderUpdate:" destination="udQ-LT-44F" eventType="valueChanged" id="FE4-bB-sfg"/>
+                                </connections>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="YUS-3c-nXn" firstAttribute="top" secondItem="x32-cx-i0F" secondAttribute="bottom" multiplier="5:1" id="0Qk-D2-5V8"/>
-                            <constraint firstItem="KNu-Eu-3Wb" firstAttribute="centerY" secondItem="Mgl-cE-Cb0" secondAttribute="centerY" id="2Rx-St-wtN"/>
-                            <constraint firstItem="pfz-dM-YuH" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" multiplier="1.1" id="3DW-Rm-j5n"/>
-                            <constraint firstItem="ubY-3F-L4b" firstAttribute="centerY" secondItem="kOi-34-kXl" secondAttribute="centerY" id="5KO-Eb-kJu"/>
+                            <constraint firstItem="xSM-Dq-HLg" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="2G2-pB-qIx"/>
                             <constraint firstItem="Mgl-cE-Cb0" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="6S1-ta-1Fk"/>
+                            <constraint firstItem="kOi-34-kXl" firstAttribute="centerX" secondItem="Mgl-cE-Cb0" secondAttribute="centerX" id="B5p-Rq-Qlx"/>
                             <constraint firstItem="kOi-34-kXl" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="BwU-gQ-r5q"/>
-                            <constraint firstItem="KNu-Eu-3Wb" firstAttribute="centerY" secondItem="x32-cx-i0F" secondAttribute="centerY" multiplier="0.9" id="CKj-70-wRY"/>
-                            <constraint firstItem="sgc-PL-l6h" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" multiplier="1.1" id="DnT-uW-0yO"/>
+                            <constraint firstItem="xSM-Dq-HLg" firstAttribute="centerY" secondItem="Gnt-56-TnQ" secondAttribute="centerY" id="DOr-8A-PTZ"/>
                             <constraint firstItem="E9e-ca-9oW" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="ERZ-39-PFj"/>
-                            <constraint firstItem="sgc-PL-l6h" firstAttribute="centerX" secondItem="XvZ-ar-05v" secondAttribute="centerX" id="FZ6-eH-byI"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Mgl-cE-Cb0" secondAttribute="trailing" multiplier="1.4" id="I9i-aV-O7m"/>
+                            <constraint firstItem="UgC-uH-uf4" firstAttribute="centerY" secondItem="UUn-ZD-vwh" secondAttribute="centerY" id="IOt-Fu-vm7"/>
+                            <constraint firstItem="UgC-uH-uf4" firstAttribute="width" secondItem="Qu2-tt-ZYf" secondAttribute="width" id="Kw2-X3-3g2"/>
                             <constraint firstItem="YUS-3c-nXn" firstAttribute="top" secondItem="Gnt-56-TnQ" secondAttribute="bottom" multiplier="5:2" id="LNJ-mP-1gV"/>
-                            <constraint firstItem="n61-lk-YMS" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" multiplier="0.9" id="M4m-wM-Vak"/>
-                            <constraint firstItem="gAe-6c-ZFn" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" multiplier="1.1" id="Mcg-Rg-6v2"/>
-                            <constraint firstItem="7Fi-fX-nGt" firstAttribute="centerY" secondItem="XvZ-ar-05v" secondAttribute="centerY" id="Nw7-K5-WIt"/>
-                            <constraint firstItem="KNu-Eu-3Wb" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" multiplier="0.9" id="P2j-tA-5Yf"/>
                             <constraint firstItem="Vpj-dJ-uWB" firstAttribute="centerY" secondItem="Gnt-56-TnQ" secondAttribute="centerY" id="Q1M-an-9hw"/>
+                            <constraint firstItem="Qu2-tt-ZYf" firstAttribute="centerY" secondItem="x32-cx-i0F" secondAttribute="centerY" id="QBQ-fm-5qT"/>
                             <constraint firstItem="Vpj-dJ-uWB" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="RdD-l2-Qd1"/>
                             <constraint firstItem="05Q-B2-FEH" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="RnF-e5-a6C"/>
                             <constraint firstItem="YUS-3c-nXn" firstAttribute="top" secondItem="05Q-B2-FEH" secondAttribute="bottom" constant="20" id="Rof-GC-G64"/>
+                            <constraint firstItem="Qu2-tt-ZYf" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="SBo-U9-Iic"/>
                             <constraint firstItem="kOi-34-kXl" firstAttribute="centerY" secondItem="mEc-HQ-tyV" secondAttribute="centerY" id="SU3-EQ-RpJ"/>
                             <constraint firstItem="UUn-ZD-vwh" firstAttribute="centerX" secondItem="Gnt-56-TnQ" secondAttribute="centerX" id="SjB-Fd-0fq"/>
+                            <constraint firstItem="Qfw-we-fvP" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="T1b-nV-nLn"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Gnt-56-TnQ" secondAttribute="trailing" multiplier="3:1" id="Tgv-5k-WHu"/>
-                            <constraint firstItem="7Fi-fX-nGt" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" multiplier="0.9" id="Uli-Ja-lzu"/>
-                            <constraint firstItem="gAe-6c-ZFn" firstAttribute="centerY" secondItem="Mgl-cE-Cb0" secondAttribute="centerY" id="UqS-CV-bpk"/>
-                            <constraint firstItem="n61-lk-YMS" firstAttribute="centerY" secondItem="Vpj-dJ-uWB" secondAttribute="centerY" id="VMy-4Z-5zP"/>
+                            <constraint firstItem="Mgl-cE-Cb0" firstAttribute="leading" secondItem="Qu2-tt-ZYf" secondAttribute="trailing" constant="20" id="YXi-JG-NTS"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="XvZ-ar-05v" secondAttribute="trailing" multiplier="1.4" id="Yey-yw-jm7"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Vpj-dJ-uWB" secondAttribute="trailing" multiplier="1.4" id="a41-mw-pdO"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="kOi-34-kXl" secondAttribute="trailing" multiplier="1.4" id="aKi-53-wVp"/>
                             <constraint firstItem="E9e-ca-9oW" firstAttribute="top" secondItem="PwJ-Zm-0WQ" secondAttribute="bottom" id="fAY-Oa-5ob"/>
+                            <constraint firstItem="UgC-uH-uf4" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="fJd-go-Cvc"/>
+                            <constraint firstItem="XvZ-ar-05v" firstAttribute="centerX" secondItem="Mgl-cE-Cb0" secondAttribute="centerX" id="ffW-L0-G76"/>
                             <constraint firstItem="YUS-3c-nXn" firstAttribute="top" secondItem="mEc-HQ-tyV" secondAttribute="bottom" multiplier="5:4" id="frz-0W-iju"/>
-                            <constraint firstItem="zj2-mP-F5m" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" multiplier="0.9" id="hqL-Uj-GGb"/>
                             <constraint firstAttribute="trailingMargin" secondItem="x32-cx-i0F" secondAttribute="trailing" multiplier="3:1" id="hvL-qa-mQj"/>
                             <constraint firstItem="XvZ-ar-05v" firstAttribute="centerY" secondItem="UUn-ZD-vwh" secondAttribute="centerY" id="iTw-EW-lbY"/>
-                            <constraint firstItem="pfz-dM-YuH" firstAttribute="centerY" secondItem="Vpj-dJ-uWB" secondAttribute="centerY" id="iVT-eb-E6m"/>
                             <constraint firstAttribute="trailingMargin" secondItem="UUn-ZD-vwh" secondAttribute="trailing" multiplier="3:1" id="l3D-EY-hoO"/>
                             <constraint firstItem="YUS-3c-nXn" firstAttribute="top" secondItem="UUn-ZD-vwh" secondAttribute="bottom" multiplier="5:3" id="ng1-O9-SQw"/>
                             <constraint firstItem="YUS-3c-nXn" firstAttribute="top" secondItem="E9e-ca-9oW" secondAttribute="bottom" constant="20" id="npN-pP-msv"/>
                             <constraint firstItem="Mgl-cE-Cb0" firstAttribute="centerY" secondItem="x32-cx-i0F" secondAttribute="centerY" id="olf-8l-KIQ"/>
-                            <constraint firstItem="KNu-Eu-3Wb" firstAttribute="centerY" secondItem="Mgl-cE-Cb0" secondAttribute="centerY" id="ouw-ps-4Bw"/>
                             <constraint firstItem="XvZ-ar-05v" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" id="pqv-CN-KRV"/>
-                            <constraint firstItem="ubY-3F-L4b" firstAttribute="centerX" secondItem="Y5Y-hW-TNR" secondAttribute="centerX" multiplier="1.1" id="rnS-N4-jSW"/>
+                            <constraint firstItem="Vpj-dJ-uWB" firstAttribute="centerX" secondItem="Mgl-cE-Cb0" secondAttribute="centerX" id="q2B-Ea-ufJ"/>
+                            <constraint firstItem="Qfw-we-fvP" firstAttribute="width" secondItem="Qu2-tt-ZYf" secondAttribute="width" id="sTG-4U-4ms"/>
+                            <constraint firstItem="xSM-Dq-HLg" firstAttribute="width" secondItem="Qu2-tt-ZYf" secondAttribute="width" id="sWD-Gp-agx"/>
+                            <constraint firstItem="Qfw-we-fvP" firstAttribute="centerY" secondItem="mEc-HQ-tyV" secondAttribute="centerY" id="uQ9-Yc-fdI"/>
                             <constraint firstItem="mEc-HQ-tyV" firstAttribute="centerX" secondItem="UUn-ZD-vwh" secondAttribute="centerX" id="vhB-pj-R7y"/>
-                            <constraint firstItem="sgc-PL-l6h" firstAttribute="centerY" secondItem="UUn-ZD-vwh" secondAttribute="centerY" id="y3o-pb-wB2"/>
+                            <constraint firstItem="Qu2-tt-ZYf" firstAttribute="width" secondItem="E9e-ca-9oW" secondAttribute="width" multiplier="2" id="wKr-bO-kDE"/>
+                            <constraint firstItem="Qu2-tt-ZYf" firstAttribute="width" secondItem="05Q-B2-FEH" secondAttribute="width" multiplier="2" id="xe8-ik-gUW"/>
                             <constraint firstItem="Gnt-56-TnQ" firstAttribute="centerX" secondItem="x32-cx-i0F" secondAttribute="centerX" id="zQu-zj-yDr"/>
-                            <constraint firstItem="zj2-mP-F5m" firstAttribute="centerY" secondItem="kOi-34-kXl" secondAttribute="centerY" id="zdZ-od-8fr"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="Tgv-5k-WHu"/>
-                                <exclude reference="2Rx-St-wtN"/>
-                                <exclude reference="CKj-70-wRY"/>
+                                <exclude reference="wKr-bO-kDE"/>
                                 <exclude reference="l3D-EY-hoO"/>
-                                <exclude reference="FZ6-eH-byI"/>
+                                <exclude reference="6S1-ta-1Fk"/>
+                                <exclude reference="YXi-JG-NTS"/>
+                                <exclude reference="RdD-l2-Qd1"/>
+                                <exclude reference="q2B-Ea-ufJ"/>
+                                <exclude reference="ffW-L0-G76"/>
+                                <exclude reference="pqv-CN-KRV"/>
                                 <exclude reference="npN-pP-msv"/>
+                                <exclude reference="B5p-Rq-Qlx"/>
+                                <exclude reference="BwU-gQ-r5q"/>
                             </mask>
                         </variation>
                     </view>
                     <connections>
                         <outlet property="crewLabel" destination="XvZ-ar-05v" id="F7q-8y-adO"/>
+                        <outlet property="crewSlider" destination="UgC-uH-uf4" id="leB-LP-fjn"/>
                         <outlet property="repairLabel" destination="kOi-34-kXl" id="DHa-P4-km0"/>
+                        <outlet property="repairSlider" destination="Qfw-we-fvP" id="2pS-qz-QVX"/>
                         <outlet property="supplyLabel" destination="Vpj-dJ-uWB" id="qmy-fa-lVE"/>
+                        <outlet property="supplySlider" destination="xSM-Dq-HLg" id="Jq3-Fw-vFe"/>
                         <outlet property="totalPointsLabel" destination="E9e-ca-9oW" id="7fT-wp-Utg"/>
                         <outlet property="weaponLabel" destination="Mgl-cE-Cb0" id="enm-id-51A"/>
+                        <outlet property="weaponSlider" destination="Qu2-tt-ZYf" id="RyA-Yh-ciK"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="gameSegue" id="Xdu-Wk-Q6r"/>
                     </connections>
                 </viewController>
@@ -427,6 +407,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="TWw-fG-XyJ"/>
+        <segue reference="Xdu-Wk-Q6r"/>
     </inferredMetricsTieBreakers>
 </document>

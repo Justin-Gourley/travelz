@@ -11,28 +11,5 @@ import UIKit
 class InfoCenter
 {
 
-    var playerLost: Bool?
-    
-    init()
-    {
-        
-    }
-    
-    func hasPlayerLost() -> Bool
-    {
-        if (playerLost == nil)
-        {
-            return false
-        }
-        else if (playerLost == true)
-        {
-            return true
-        }
-        else
-        {
-            return false
-        }
-    }
-  
 
 }

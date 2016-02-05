@@ -21,13 +21,74 @@ class GainScreen: UIViewController {
     @IBOutlet weak var crewLabel: UILabel!
     @IBOutlet weak var repairLabel: UILabel!
     @IBOutlet weak var supplyLabel: UILabel!
-
+    //weaponslider
+    @IBOutlet weak var weaponSlider: UISlider!
+    @IBOutlet weak var supplySlider: UISlider!
+    @IBOutlet weak var crewSlider: UISlider!
+    @IBOutlet weak var repairSlider: UISlider!
+    let infoCenter = AppDelegate()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         getCrewCount()
         totalPoints = (crewCount + 1) * 10
         totalPointsLabel.text = "Points: \(totalPoints)"
+        weaponSlider.maximumValue = (Float)(totalPoints)
+        weaponSlider.value = 0
+        crewSlider.maximumValue = (Float)(totalPoints)
+        crewSlider.value = 0
+        supplySlider.maximumValue = (Float)(totalPoints)
+        supplySlider.value = 0
+        repairSlider.maximumValue = (Float)(totalPoints)
+        repairSlider.value = 0
+        let pointsArray = getSliderPoints()
+        if (pointsArray.count > 1)
+        {
+            print("Loaded previous slider data")
+            weaponSlider.value = (Float)(pointsArray[0])
+            supplySlider.value = (Float)(pointsArray[1])
+            crewSlider.value = (Float)(pointsArray[2])
+            repairSlider.value = (Float)(pointsArray[3])
+            totalPoints -= pointsArray[4]
+        }
+    }
+    
+    func setSliderPoints(pointsArray: [Int])
+    {
+        NSUserDefaults.standardUserDefaults() .setObject(pointsArray, forKey: "pointsArray")
+        print("Set slider data: \(pointsArray)")
+    }
+    
+    func getSliderPoints() -> [Int]
+    {
+        var pointsArray = [0]
+        guard let points = NSUserDefaults.standardUserDefaults() .valueForKey("pointsArray") as? [Int]
+        else{
+            print("No Slider data to load")
+            pointsArray = [0]
+            return pointsArray
+        }
+        pointsArray = points
+        print(points)
+        if (pointsArray[0] == 0 && pointsArray[1] == 0 && pointsArray[2] == 0 && pointsArray[3] == 0)
+        {
+            pointsArray = [0]
+        }
+        else
+        {
+            totalPoints = pointsArray[4]
+            weaponPoints = pointsArray[0]
+            updateLabel("weaponsLabel")
+            supplyPoints = pointsArray[1]
+            updateLabel("supplyLabel")
+            crewPoints = pointsArray[2]
+            updateLabel("crewLabel")
+            repairPoints = pointsArray[3]
+            updateLabel("repairLabel")
+        }
+        print("returning slider data: \(pointsArray)   w:\(weaponPoints) s:\(supplyPoints) c:\(crewPoints) r:\(repairPoints)")
+        return pointsArray
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -50,111 +111,126 @@ class GainScreen: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    @IBAction func weaponAdd(sender: AnyObject)
-    {
-        if (totalPoints > 0)
+    @IBAction func weaponSliderUpdate(sender: AnyObject) {
+        var parseInt: Int = (Int)(weaponSlider.value)
+        if (parseInt > weaponPoints)
         {
-            weaponPoints++
-            totalPoints--
-            updateLabel("weaponsLabel")
+            for (var i = (weaponPoints + 1); i <= parseInt;)
+            {
+                weaponPoints = i
+                totalPoints--
+                if (totalPoints < 0)
+                {
+                    weaponPoints -= 1
+                    parseInt = weaponPoints
+                    totalPoints = 0
+                    i = parseInt
+                }
+                i++
+            }
         }
-        else
+        else if (weaponPoints > parseInt)
         {
-            print("not enough total points")
+            for (var i = (weaponPoints - 1); i >= parseInt;)
+            {
+                weaponPoints = i
+                totalPoints++
+                i--
+            }
         }
+        weaponSlider.value = (Float)(parseInt)
+        updateLabel("weaponsLabel")
     }
-    @IBAction func weaponSub(sender: AnyObject)
-    {
-        if (weaponPoints > 0)
+    @IBAction func supplySliderUpdate(sender: AnyObject) {
+        var parseInt: Int = (Int)(supplySlider.value)
+        if (parseInt > supplyPoints)
         {
-            weaponPoints--
-            totalPoints++
-            updateLabel("weaponsLabel")
+            for (var i = (supplyPoints + 1); i <= parseInt;)
+            {
+                supplyPoints = i
+                totalPoints--
+                if (totalPoints < 0)
+                {
+                    supplyPoints -= 1
+                    parseInt = supplyPoints
+                    totalPoints = 0
+                    i = parseInt
+                }
+                i++
+            }
         }
-        else
+        else if (supplyPoints > parseInt)
         {
-            print("not enough weapon points")
+            for (var i = (supplyPoints - 1); i >= parseInt;)
+            {
+                supplyPoints = i
+                totalPoints++
+                i--
+            }
         }
+        supplySlider.value = (Float)(parseInt)
+        updateLabel("supplyLabel")
     }
-    @IBAction func supplyAdd(sender: AnyObject)
-    {
-        if (totalPoints > 0)
+    @IBAction func crewSliderUpdate(sender: AnyObject) {
+        var parseInt: Int = (Int)(crewSlider.value)
+        if (parseInt > crewPoints)
         {
-            supplyPoints++
-            totalPoints--
-            updateLabel("supplyLabel")
+            for (var i = (crewPoints + 1); i <= parseInt;)
+            {
+                crewPoints = i
+                totalPoints--
+                if (totalPoints < 0)
+                {
+                    crewPoints -= 1
+                    parseInt = crewPoints
+                    totalPoints = 0
+                    i = parseInt
+                }
+                i++
+            }
         }
-        else
+        else if (crewPoints > parseInt)
         {
-            print("not enough total points")
+            for (var i = (crewPoints - 1); i >= parseInt;)
+            {
+                crewPoints = i
+                totalPoints++
+                i--
+            }
         }
+        crewSlider.value = (Float)(parseInt)
+        updateLabel("crewLabel")
     }
-    @IBAction func supplySub(sender: AnyObject)
-    {
-        if (supplyPoints > 0)
+    @IBAction func repairSliderUpdate(sender: AnyObject) {
+        var parseInt: Int = (Int)(repairSlider.value)
+        if (parseInt > repairPoints)
         {
-            supplyPoints--
-            totalPoints++
-            updateLabel("supplyLabel")
+            for (var i = (repairPoints + 1); i <= parseInt;)
+            {
+                repairPoints = i
+                totalPoints--
+                if (totalPoints < 0)
+                {
+                    repairPoints -= 1
+                    parseInt = repairPoints
+                    totalPoints = 0
+                    i = parseInt
+                }
+                i++
+            }
         }
-        else
+        else if (repairPoints > parseInt)
         {
-            print("not enough supply points")
+            for (var i = (repairPoints - 1); i >= parseInt;)
+            {
+                repairPoints = i
+                totalPoints++
+                i--
+            }
         }
+        repairSlider.value = (Float)(parseInt)
+        updateLabel("repairLabel")
     }
-    @IBAction func crewAdd(sender: AnyObject)
-    {
-        if (totalPoints > 0)
-        {
-            crewPoints++
-            totalPoints--
-            updateLabel("crewLabel")
-        }
-        else
-        {
-            print("not enough total points")
-        }
-    }
-    @IBAction func crewSub(sender: AnyObject)
-    {
-        if (crewPoints > 0)
-        {
-            crewPoints--
-            totalPoints++
-            updateLabel("crewLabel")
-        }
-        else
-        {
-            print("not enough crew points")
-        }
-    }
-    @IBAction func repairAdd(sender: AnyObject)
-    {
-        if (totalPoints > 0)
-        {
-            repairPoints++
-            totalPoints--
-            updateLabel("repairLabel")
-        }
-        else
-        {
-            print("not enough total points")
-        }
-    }
-    @IBAction func repairSub(sender: AnyObject)
-    {
-        if (repairPoints > 0)
-        {
-            repairPoints--
-            totalPoints++
-            updateLabel("repairLabel")
-        }
-        else
-        {
-            print("not enough repair points")
-        }
-    }
-    
     func updateLabel(label: String)
     {
         totalPointsLabel.text = ("Points: \(totalPoints)")
@@ -172,6 +248,8 @@ class GainScreen: UIViewController {
     {
         if (totalPoints == 0)
         {
+            let pointsArray = [weaponPoints, supplyPoints, crewPoints, repairPoints, totalPoints]
+            setSliderPoints(pointsArray)
             //put the code fot determining what happens here....
             weaponPoints *= 5
             supplyPoints *= 10

@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
+      "filename" : "gun-AWP.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "AK_Character_Pos3.png",
       "scale" : "2x"
     },
     {

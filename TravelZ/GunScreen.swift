@@ -150,13 +150,17 @@ extension GunScreen : UICollectionViewDataSource {
         }
         var image: UIImage = UIImage(named: "PlayerStill-Colt45")!
         print("gun: \(descoveredGuns[indexPath.item].name)")
-        if (descoveredGuns[indexPath.item].name == "AWP" || descoveredGuns[indexPath.item].name == "Sniper1" || descoveredGuns[indexPath.item].name == "Pistol2")
+        if (descoveredGuns[indexPath.item].name == "Pistol2")
         {
-            image = UIImage(named: "gun-Colt45")!
+            image = UIImage(named: "gun-M9")!
         }
         else if (descoveredGuns[indexPath.item].name == "AssaultRifle2")
         {
-            image = UIImage(named: "gun-AK-47")!
+            image = UIImage(named: "gun-M4A1")!
+        }
+        else if (descoveredGuns[indexPath.item].name == "Sniper1")
+        {
+            image = UIImage(named: "gun-AWP")!
         }
         else
         {

@@ -76,7 +76,7 @@ class MainMenuVC: UIViewController {
         let height = self.view.frame.height / 10
         var positions: [[CGPoint]] =
         [
-            //level 1
+        //level 1
         [CGPoint(x: width * 1, y: height),
         CGPoint(x: width * 1, y: height * 2),
         CGPoint(x: width * 6, y: height * 2),
