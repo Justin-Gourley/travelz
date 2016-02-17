@@ -66,7 +66,6 @@ class GunScreen: UIViewController, UIScrollViewDelegate {
         let gunDescription: [String] = loadString("gunDescription")
         let gunUnlocked: [Bool] = (NSUserDefaults.standardUserDefaults() .objectForKey("gunUnlocked") as? [Bool])!
         
-        print("gun count: \(gunName.count)")
         curGun1 = loadGunSlot("gunSlot1")
         curGun2 = loadGunSlot("gunSlot2")
         
@@ -149,7 +148,6 @@ extension GunScreen : UICollectionViewDataSource {
             return cell
         }
         var image: UIImage = UIImage(named: "PlayerStill-Colt45")!
-        print("gun: \(descoveredGuns[indexPath.item].name)")
         if (descoveredGuns[indexPath.item].name == "Pistol2")
         {
             image = UIImage(named: "gun-M9")!

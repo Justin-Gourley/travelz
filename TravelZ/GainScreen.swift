@@ -10,12 +10,12 @@ import UIKit
 
 class GainScreen: UIViewController {
 
-    var crewCount = 0
     var weaponPoints = 0
     var supplyPoints = 0
     var crewPoints = 0
     var repairPoints = 0
     var totalPoints = 0
+    var currentCrew = 0
     @IBOutlet weak var totalPointsLabel: UILabel!
     @IBOutlet weak var weaponLabel: UILabel!
     @IBOutlet weak var crewLabel: UILabel!
@@ -28,12 +28,25 @@ class GainScreen: UIViewController {
     @IBOutlet weak var repairSlider: UISlider!
     let infoCenter = AppDelegate()
     
+    @IBOutlet weak var continueButton2: UIButton!
+    @IBOutlet weak var unlockImage: UIImageView!
+    @IBOutlet weak var unlockTitle: UILabel!
+    @IBOutlet weak var unlockDescription: UILabel!
+    @IBOutlet weak var unlockPicture: UIImageView!
+    @IBOutlet weak var visualEffect: UIVisualEffectView!
+    var newCrew = false
+    var gunUnlock = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        getCrewCount()
+        continueButton2.hidden = true
+        unlockImage.hidden = true
+        unlockTitle.hidden = true
+        unlockDescription.hidden = true
+        unlockPicture.hidden = true
+        visualEffect.hidden = true
+        let crewCount = getCrewCount()
         totalPoints = (crewCount + 1) * 10
-        totalPointsLabel.text = "Points: \(totalPoints)"
         weaponSlider.maximumValue = (Float)(totalPoints)
         weaponSlider.value = 0
         crewSlider.maximumValue = (Float)(totalPoints)
@@ -50,8 +63,10 @@ class GainScreen: UIViewController {
             supplySlider.value = (Float)(pointsArray[1])
             crewSlider.value = (Float)(pointsArray[2])
             repairSlider.value = (Float)(pointsArray[3])
-            totalPoints -= pointsArray[4]
+            let total = pointsArray[0] + pointsArray[1] + pointsArray[2] + pointsArray[3]
+            totalPoints -= total
         }
+        totalPointsLabel.text = "Points: \(totalPoints)"
     }
     
     func setSliderPoints(pointsArray: [Int])
@@ -77,7 +92,6 @@ class GainScreen: UIViewController {
         }
         else
         {
-            totalPoints = pointsArray[4]
             weaponPoints = pointsArray[0]
             updateLabel("weaponsLabel")
             supplyPoints = pointsArray[1]
@@ -95,16 +109,15 @@ class GainScreen: UIViewController {
         
     }
     
-    func getCrewCount()
+    func getCrewCount() -> Int
     {
         guard let crewCountGet: Int = NSUserDefaults.standardUserDefaults() .valueForKey("crewCount") as? Int
             else {
                 print("Unable to get crew count")
-                crewCount = 0
-                return
+                return 0
         }
-        crewCount = crewCountGet
-        print("Crew count: \(crewCount)")
+        print("Crew count: \(crewCountGet)")
+        return crewCountGet
     }
 
     override func didReceiveMemoryWarning() {
@@ -243,9 +256,14 @@ class GainScreen: UIViewController {
         else if (label == "repairLabel")
         {repairLabel.text="\(repairPoints)"}
     }
+    @IBAction func goBack(sender: AnyObject) {
+        navigationController?.popToRootViewControllerAnimated(true)
+    }
 
     @IBAction func goToGame(sender: UIButton)
     {
+        var unlockedSomething = false
+        gunUnlock = ""
         if (totalPoints == 0)
         {
             let pointsArray = [weaponPoints, supplyPoints, crewPoints, repairPoints, totalPoints]
@@ -253,7 +271,7 @@ class GainScreen: UIViewController {
             //put the code fot determining what happens here....
             weaponPoints *= 5
             supplyPoints *= 10
-            crewPoints *= 3
+            crewPoints *= 5
             repairPoints *= 2
             if (repairPoints > 0)
             {
@@ -273,6 +291,8 @@ class GainScreen: UIViewController {
                 let ranGun = (Int)(arc4random_uniform((UInt32)(gunName!.count)))
                 print("Gun Unlocked: \(gunName![ranGun])")
                 gunUnlocked![ranGun] = true
+                unlockedSomething = true
+                gunUnlock = gunName![ranGun]
                 NSUserDefaults.standardUserDefaults().setObject(gunUnlocked, forKey: "gunUnlocked")
                 NSUserDefaults.standardUserDefaults().synchronize()
             }
@@ -281,19 +301,31 @@ class GainScreen: UIViewController {
             {
                 print("Got Supplies")
                 //unlocked supplies!
+                unlockedSomething = true
             }
             let ran3: Int = (Int)(arc4random_uniform(100) + 1)
             if (ran3 <= crewPoints)
             {
                 print("Got new crew member")
-                crewCount++
-                print("Crew count: \(crewCount)")
-                NSUserDefaults.standardUserDefaults().setObject(crewCount, forKey: "crewCount")
+                let count = getCrewCount()
+                currentCrew = count
+                currentCrew++
+                print("Crew count: \(currentCrew)")
+                NSUserDefaults.standardUserDefaults().setObject(currentCrew, forKey: "crewCount")
                 NSUserDefaults.standardUserDefaults().synchronize()
+                unlockedSomething = true
+                newCrew = true
                 //unlocked a new member for the crew!
             }
             //---
-            performSegueWithIdentifier("gameSegue", sender: nil)
+            if (!unlockedSomething)
+            {
+                performSegueWithIdentifier("gameSegue", sender: nil)
+            }
+            else
+            {
+                showUnlocked()
+            }
         }
         else
         {
@@ -301,4 +333,31 @@ class GainScreen: UIViewController {
         }
     }
     
+    func showUnlocked()
+    {
+//        unlockImage.image = UIImage(named: "")
+        unlockTitle.text = "New Unlock!"
+        unlockDescription.text = ""
+        var descriptionText = ""
+        if (gunUnlock != "")
+        {
+            descriptionText += "New Weapon found! You found a \(gunUnlock)!"
+            unlockPicture.image = UIImage(named: "gun-\(gunUnlock)")
+        }
+        if (newCrew == true)
+        {
+            descriptionText += "New Crew member found!"
+            descriptionText += "Current Crew Count: \(currentCrew)"
+        }
+        unlockDescription.text = descriptionText
+        continueButton2.hidden = false
+        unlockImage.hidden = false
+        unlockTitle.hidden = false
+        unlockDescription.hidden = false
+        unlockPicture.hidden = false
+        visualEffect.hidden = false
+    }
+    @IBAction func goToGame2(sender: AnyObject) {
+        performSegueWithIdentifier("gameSegue", sender: nil)
+    }
 }

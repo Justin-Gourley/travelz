@@ -19,6 +19,7 @@
 		D04EA6ED1C3AADD900A7C06C /* GunScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04EA6EC1C3AADD900A7C06C /* GunScreen.swift */; };
 		D0A459261C1F35B40000802B /* MainMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A459251C1F35B40000802B /* MainMenuVC.swift */; };
 		D0A459281C1F38B50000802B /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A459271C1F38B50000802B /* GameVC.swift */; };
+		D0A835B71C6CD57F0007E5CD /* MapScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A835B61C6CD57F0007E5CD /* MapScreen.swift */; };
 		D0D4782B1C1B32590028BB36 /* GameScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D4782A1C1B32590028BB36 /* GameScreen.swift */; };
 		D0F6A5E51C233405005347AD /* InfoCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F6A5E41C233405005347AD /* InfoCenter.swift */; };
 		D0F6A5EC1C2334C8005347AD /* SaveInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0F6A5EB1C2334C8005347AD /* SaveInfo.plist */; };
@@ -60,6 +61,7 @@
 		D04EA6EC1C3AADD900A7C06C /* GunScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GunScreen.swift; sourceTree = "<group>"; };
 		D0A459251C1F35B40000802B /* MainMenuVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuVC.swift; sourceTree = "<group>"; };
 		D0A459271C1F38B50000802B /* GameVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameVC.swift; sourceTree = "<group>"; };
+		D0A835B61C6CD57F0007E5CD /* MapScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapScreen.swift; sourceTree = "<group>"; };
 		D0D4782A1C1B32590028BB36 /* GameScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScreen.swift; sourceTree = "<group>"; };
 		D0F6A5E41C233405005347AD /* InfoCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoCenter.swift; sourceTree = "<group>"; };
 		D0F6A5EB1C2334C8005347AD /* SaveInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = SaveInfo.plist; sourceTree = "<group>"; };
@@ -90,14 +92,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D00B19211C55768E00DBFB53 /* GainScreen */ = {
-			isa = PBXGroup;
-			children = (
-				D00B19221C5576A600DBFB53 /* GainScreen.swift */,
-			);
-			name = GainScreen;
-			sourceTree = "<group>";
-		};
 		D014BDD21C19055600A5B245 = {
 			isa = PBXGroup;
 			children = (
@@ -160,40 +154,25 @@
 			name = "CollectionView Cells";
 			sourceTree = "<group>";
 		};
-		D04EA6EE1C3AADE300A7C06C /* GunScreen */ = {
+		D0A835B91C6CD5990007E5CD /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				D0D4782A1C1B32590028BB36 /* GameScreen.swift */,
+				D0A835B61C6CD57F0007E5CD /* MapScreen.swift */,
+				D00B19221C5576A600DBFB53 /* GainScreen.swift */,
 				D04EA6EC1C3AADD900A7C06C /* GunScreen.swift */,
+				D0A459251C1F35B40000802B /* MainMenuVC.swift */,
+				D0A459271C1F38B50000802B /* GameVC.swift */,
 			);
-			name = GunScreen;
+			name = Screens;
 			sourceTree = "<group>";
 		};
 		D0F6A5E61C233464005347AD /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				D00B19211C55768E00DBFB53 /* GainScreen */,
-				D04EA6EE1C3AADE300A7C06C /* GunScreen */,
-				D0F6A5E81C233486005347AD /* MainMenu */,
-				D0F6A5E71C23347C005347AD /* Game */,
+				D0A835B91C6CD5990007E5CD /* Screens */,
 			);
 			name = ViewControllers;
-			sourceTree = "<group>";
-		};
-		D0F6A5E71C23347C005347AD /* Game */ = {
-			isa = PBXGroup;
-			children = (
-				D0D4782A1C1B32590028BB36 /* GameScreen.swift */,
-				D0A459271C1F38B50000802B /* GameVC.swift */,
-			);
-			name = Game;
-			sourceTree = "<group>";
-		};
-		D0F6A5E81C233486005347AD /* MainMenu */ = {
-			isa = PBXGroup;
-			children = (
-				D0A459251C1F35B40000802B /* MainMenuVC.swift */,
-			);
-			name = MainMenu;
 			sourceTree = "<group>";
 		};
 		D0F6A5E91C233491005347AD /* Storyboards */ = {
@@ -364,6 +343,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0A835B71C6CD57F0007E5CD /* MapScreen.swift in Sources */,
 				D014BDDF1C19055600A5B245 /* AppDelegate.swift in Sources */,
 				D0D4782B1C1B32590028BB36 /* GameScreen.swift in Sources */,
 				D00B19231C5576A600DBFB53 /* GainScreen.swift in Sources */,

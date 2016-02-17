@@ -76,5 +76,9 @@
 	<integer>0</integer>
 	<key>pointsArray</key>
 	<array/>
+	<key>stageInfo</key>
+	<array/>
+	<key>finishedLevel</key>
+	<false/>
 </dict>
 </plist>
