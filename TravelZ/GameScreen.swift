@@ -49,7 +49,7 @@ class GameScreen: SKScene {
     var ammoNode: SKSpriteNode?
     var ammoLabelNode: SKLabelNode?
     var bulletNum: Int = 0
-    
+    var outOfFiringRange: Bool = false
     var currentGun: guns?
     var secondaryGun: guns?
     
@@ -370,7 +370,7 @@ class GameScreen: SKScene {
     
     func updateCharacterAnimation()
     {
-        if (isFiring)
+        if (isFiring == true && outOfFiringRange == false)
         {
             if (isFiringPic)
             {
@@ -444,6 +444,12 @@ class GameScreen: SKScene {
             {
                 print("unable to load secondary gun as there is no secondary gun equiped...")
             }
+        }
+        else if ((node.name == "ammoNode" || node.name == "ammoLabelNode") && isReloading == false)
+        {
+            isReloading = true
+            NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
+            ammoLabelNode?.text = "Reloading..."
         }
         else
         {
@@ -522,32 +528,40 @@ class GameScreen: SKScene {
         }
         else
         {
-            let bulletTexture = SKTexture(imageNamed: "bullet_\(currentGun!.type)")
-            bulletNode.append(SKSpriteNode(texture: bulletTexture, color: UIColor.whiteColor(), size: CGSize(width: playerNode.frame.width / 10, height: playerNode.frame.width / 10)))
-            bulletNode[numberOfBullets].position = CGPoint(x: playerNode.position.x - playerNode.frame.width / 2, y: playerNode.position.y + playerNode.frame.height / 4)
-            bulletNode[numberOfBullets].name = "bulletNode\(numberOfBullets)"
-            bulletNode[numberOfBullets].zPosition = 5;
-            //calculating bullet spread
-            var randomOffY: CGFloat = (CGFloat)(arc4random_uniform((UInt32)((currentGun?.spread)!)))
-            if (arc4random_uniform(2) == 1)
-            {
-                randomOffY -= (randomOffY * 2)
-            }
-        
             let vecX = (point.x - playerNode.position.x)
             let vecY = (point.y - playerNode.position.y)
-        
             let vecAngle = atan2(vecX, vecY)
+            print(vecAngle)
+            if (vecAngle <= -1.3 && vecAngle >= -1.85)
+            {
+                let bulletTexture = SKTexture(imageNamed: "bullet_\(currentGun!.type)")
+                bulletNode.append(SKSpriteNode(texture: bulletTexture, color: UIColor.whiteColor(), size: CGSize(width: playerNode.frame.width / 12, height: playerNode.frame.width / 15)))
+                bulletNode[numberOfBullets].position = CGPoint(x: playerNode.position.x - playerNode.frame.width / 2, y: playerNode.position.y + playerNode.frame.height / 4)
+                bulletNode[numberOfBullets].name = "bulletNode\(numberOfBullets)"
+                bulletNode[numberOfBullets].zPosition = 5;
+                //calculating bullet spread
+                var randomOffY: CGFloat = (CGFloat)(arc4random_uniform((UInt32)((currentGun?.spread)!)))
+                if (arc4random_uniform(2) == 1)
+                {
+                    randomOffY -= (randomOffY * 2)
+                }
             
-            let finalX = sin(vecAngle) * (CGFloat)((currentGun?.velocity)!)
-            let finalY = (cos(vecAngle) * (CGFloat)((currentGun?.velocity)!)) + randomOffY
-        
-            let vec = CGPoint(x: finalX, y: finalY)
-            bulletFireTo.append(vec)
-            bulletIsActive.append(true)
-            addChild(bulletNode[numberOfBullets])
-            numberOfBullets++
-            shotsRemaining--
+                let finalX = sin(vecAngle) * (CGFloat)((currentGun?.velocity)!)
+                let finalY = (cos(vecAngle) * (CGFloat)((currentGun?.velocity)!)) + randomOffY
+            
+                let vec = CGPoint(x: finalX, y: finalY)
+                bulletFireTo.append(vec)
+                bulletIsActive.append(true)
+                addChild(bulletNode[numberOfBullets])
+                numberOfBullets++
+                shotsRemaining--
+                outOfFiringRange = false
+            }
+            else
+            {
+                outOfFiringRange = true
+                isFiring = false
+            }
         }
     }
     
