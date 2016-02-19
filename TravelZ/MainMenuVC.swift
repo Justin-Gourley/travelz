@@ -43,7 +43,7 @@ class MainMenuVC: UIViewController {
         }
         else
         {
-            nextLevelButton.hidden = true
+            nextLevelButton.hidden = false
         }
     }
     
@@ -324,6 +324,7 @@ class MainMenuVC: UIViewController {
         let gunName: [String] = ["Colt45", "AK-47", "M9", "M4A1", "SCAR"]
         let gunType: [String] = ["Pistol", "Assault Rifle", "Pistol", "Assault Rifle", "Assault Rifle"]
         let gunDescription: [String] = ["Pistol", "Assault Rifle", "desc here...", "desc here...", "desc here..."]
+        let gunAmmoCount: [Int] = [99999, 99999]
         let gunDamage: [Double] = [20, 30, 30, 25, 15]
         let gunVelocity: [Double] = [100, 120, 120, 125, 100]
         let gunSpread: [Int] = [2, 5, 3, 3, 6]
@@ -333,6 +334,7 @@ class MainMenuVC: UIViewController {
         let gunUnlocked: [Bool] = [true, false, false, false, false]
         
         NSUserDefaults.standardUserDefaults() .setObject(gunName, forKey: "gunName")
+        NSUserDefaults.standardUserDefaults() .setObject(gunAmmoCount, forKey: "gunAmmoCount")
         NSUserDefaults.standardUserDefaults() .setObject(gunType, forKey: "gunType")
         NSUserDefaults.standardUserDefaults() .setObject(gunDescription, forKey: "gunDescription")
         NSUserDefaults.standardUserDefaults() .setObject(gunDamage, forKey: "gunDamage")

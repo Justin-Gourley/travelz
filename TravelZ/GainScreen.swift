@@ -36,6 +36,8 @@ class GainScreen: UIViewController {
     @IBOutlet weak var visualEffect: UIVisualEffectView!
     var newCrew = false
     var gunUnlock = ""
+    var ammoUnlock = ""
+    var ammoGet = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -300,8 +302,26 @@ class GainScreen: UIViewController {
             if (ran2 <= supplyPoints)
             {
                 print("Got Supplies")
+                var ammo: [Int] = NSUserDefaults.standardUserDefaults() .objectForKey("gunAmmoCount") as! [Int]
+                let ran = (Int)((arc4random_uniform(10) + 1))
+                if (ran <= 6)
+                {
+                    let ran = (Int)((arc4random_uniform(40) + 1))
+                    ammoUnlock = "Pistol"
+                    ammo[0] += ran
+                    ammoGet = ran
+                }
+                else
+                {
+                    let ran = (Int)((arc4random_uniform(40) + 1))
+                    ammoUnlock = "Assault Rifle"
+                    ammo[1] += ran
+                    ammoGet = ran
+                }
                 //unlocked supplies!
                 unlockedSomething = true
+                NSUserDefaults.standardUserDefaults() .setObject(ammo, forKey: "gunAmmoCount")
+                NSUserDefaults.standardUserDefaults() .synchronize()
             }
             let ran3: Int = (Int)(arc4random_uniform(100) + 1)
             if (ran3 <= crewPoints)
@@ -339,16 +359,27 @@ class GainScreen: UIViewController {
         unlockTitle.text = "New Unlock!"
         unlockDescription.text = ""
         var descriptionText = ""
+        var gunText = ""
+        var ammoText = ""
+        var crewText = ""
         if (gunUnlock != "")
         {
-            descriptionText += "New Weapon found! You found a \(gunUnlock)!"
+            gunText = "New Weapon found!     You found a \(gunUnlock)!"
             unlockPicture.image = UIImage(named: "gun-\(gunUnlock)")
+        }
+        if (ammoUnlock != "")
+        {
+            if (gunUnlock == "")
+            {
+                unlockPicture.image = UIImage(named: "bullet_\(ammoUnlock)")   
+            }
+            ammoText = "Supplies found!     You found \(ammoGet) \(ammoUnlock) rounds!"
         }
         if (newCrew == true)
         {
-            descriptionText += "New Crew member found!"
-            descriptionText += "Current Crew Count: \(currentCrew)"
+            crewText = "New Crew member found!     Current Crew Count: \(currentCrew)"
         }
+        descriptionText = "\(gunText)\n\(ammoText)\n\(crewText)"
         unlockDescription.text = descriptionText
         continueButton2.hidden = false
         unlockImage.hidden = false

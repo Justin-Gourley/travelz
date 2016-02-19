@@ -52,6 +52,7 @@ class GameScreen: SKScene {
     var outOfFiringRange: Bool = false
     var currentGun: guns?
     var secondaryGun: guns?
+    var totalAmmoCount: [Int] = []
     
     let info = AppDelegate()
     
@@ -80,7 +81,7 @@ class GameScreen: SKScene {
         self.view?.showsFPS = true
 
         loadGuns()
-        shotsRemaining = (currentGun?.ammoClip)!
+        shotsRemaining = 0
         loadGameData()
         if (level == nil)
         {
@@ -117,21 +118,12 @@ class GameScreen: SKScene {
         ammoNode?.name = "ammoNode"
         ammoNode?.zPosition = 1011
         addChild(ammoNode!)
-        updateAmmo()
         
         let backgroundAmmoNode = SKSpriteNode(color: UIColor.darkGrayColor(), size: CGSize(width: self.frame.size.width/4, height: self.frame.size.height / 10))
         backgroundAmmoNode.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 10 * 9)
         backgroundAmmoNode.name = "ammoBackgroundNode"
         backgroundAmmoNode.zPosition = 1010
         addChild(backgroundAmmoNode)
-        
-        ammoLabelNode = SKLabelNode(text: "\(shotsRemaining)/\(currentGun!.ammoClip)")
-        ammoLabelNode?.fontColor = UIColor.whiteColor()
-        ammoLabelNode?.fontSize = (ammoNode!.size.width / 10)
-        ammoLabelNode?.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 20 * 18)
-        ammoLabelNode?.name = "ammoLabelNode"
-        ammoLabelNode?.zPosition = 1015
-        addChild(ammoLabelNode!)
         
         
         barricadeNode = SKSpriteNode(texture: SKTexture(imageNamed: "BarricadeFull"), color: UIColor.whiteColor(), size: CGSize(width: self.frame.width / 10, height: (self.frame.height / 6) * 4))
@@ -154,6 +146,37 @@ class GameScreen: SKScene {
         switchGunNode.zPosition = 1000
         addChild(switchGunNode)
         
+        guard let totalAmmoCountGet = NSUserDefaults.standardUserDefaults() .objectForKey("gunAmmoCount") as? [Int]
+            else
+        {
+            ammoLabelNode = SKLabelNode(text: "\(shotsRemaining)/0")
+            ammoLabelNode?.fontColor = UIColor.whiteColor()
+            ammoLabelNode?.fontSize = (ammoNode!.size.width / 10)
+            ammoLabelNode?.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 20 * 18)
+            ammoLabelNode?.name = "ammoLabelNode"
+            ammoLabelNode?.zPosition = 1015
+            addChild(ammoLabelNode!)
+            print("Error obtaining ammo for guns")
+            return
+        }
+        totalAmmoCount = totalAmmoCountGet
+        
+        var ammoTypeNum = 0
+        if (currentGun!.type == "Pistol")
+        {ammoTypeNum = 0}
+        else if (currentGun!.type == "Assault Rifle")
+        {ammoTypeNum = 1}
+        ammoLabelNode = SKLabelNode(text: "\(shotsRemaining)/\(totalAmmoCount[ammoTypeNum])")
+        ammoLabelNode?.fontColor = UIColor.whiteColor()
+        ammoLabelNode?.fontSize = (ammoNode!.size.width / 10)
+        ammoLabelNode?.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 20 * 18)
+        ammoLabelNode?.name = "ammoLabelNode"
+        ammoLabelNode?.zPosition = 1015
+        addChild(ammoLabelNode!)
+        
+        NSTimer.scheduledTimerWithTimeInterval(currentGun!.reloadTime, target: self, selector: "endReload", userInfo: nil, repeats: false)
+        
+        updateAmmo()
         createZombies()
         updateCharacterTexture()
     }
@@ -184,6 +207,7 @@ class GameScreen: SKScene {
             {
                 randomX = (CGFloat)(arc4random_uniform((UInt32)(i) * 50))
             }
+            
             node.position = CGPoint(x: -(randomX), y: (CGFloat)((arc4random_uniform((UInt32)(((self.frame.height / 6) * 4) - (playerNode.frame.height / 2)))) + (UInt32)(self.frame.height / 20)))
             node.zPosition = (view!.frame.height - node.position.y) + 10
             zombieNodes.append(node)
@@ -268,9 +292,17 @@ class GameScreen: SKScene {
                             updateCharacterAnimation()
                         }
                     }
-                    playerShoot(shotsAt!)
-                    allowedToFire = false
-                    NSTimer.scheduledTimerWithTimeInterval((currentGun?.shotSpeed)!, target: self, selector: "setFireToTrue", userInfo: nil, repeats: false)
+                    var ammoTypeNum = 0
+                    if (currentGun!.type == "Pistol")
+                    {ammoTypeNum = 0}
+                    else if (currentGun!.type == "Assault Rifle")
+                    {ammoTypeNum = 1}
+                    if (totalAmmoCount[ammoTypeNum] > 0 || shotsRemaining > 0)
+                    {
+                        playerShoot(shotsAt!)
+                        allowedToFire = false
+                        NSTimer.scheduledTimerWithTimeInterval((currentGun?.shotSpeed)!, target: self, selector: "setFireToTrue", userInfo: nil, repeats: false)
+                    }
                 }
                 else
                 {
@@ -299,6 +331,7 @@ class GameScreen: SKScene {
                 endNode.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
                 addChild(endNode)
                 hasGameEnded = true
+                NSUserDefaults.standardUserDefaults().setObject(totalAmmoCount, forKey: "gunAmmoCount")
                 NSUserDefaults.standardUserDefaults() .setObject(true, forKey: "finishedLevel")
                 NSUserDefaults.standardUserDefaults() .synchronize()
                 NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: "endGameWin", userInfo: nil, repeats: false)
@@ -380,6 +413,15 @@ class GameScreen: SKScene {
             {
                 isFiringPic = true
             }
+            var ammoTypeNum = 0
+            if (currentGun!.type == "Pistol")
+            {ammoTypeNum = 0}
+            else if (currentGun!.type == "Assault Rifle")
+            {ammoTypeNum = 1}
+            if (totalAmmoCount[ammoTypeNum] > 0)
+            {
+                isFiringPic = false
+            }
         }
         else if (playerAnimateState == 0)
         {
@@ -403,6 +445,15 @@ class GameScreen: SKScene {
     func updateCharacterTexture()
     {
         isPlayerMoving = false
+        var ammoTypeNum = 0
+        if (currentGun!.type == "Pistol")
+        {ammoTypeNum = 0}
+        else if (currentGun!.type == "Assault Rifle")
+        {ammoTypeNum = 1}
+        if (totalAmmoCount[ammoTypeNum] > 0 && shotsRemaining == 0)
+        {
+            isFiring = false
+        }
         if (isFiring)
         {
             playerNode.texture = SKTexture(imageNamed: "PlayerFire-\(currentGun!.name)")
@@ -437,7 +488,7 @@ class GameScreen: SKScene {
                 shotsRemaining = 0
                 updateCharacterTexture()
                 isReloading = true
-                NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
+                NSTimer.scheduledTimerWithTimeInterval(((currentGun?.reloadTime)! / 2), target: self, selector: "endReload", userInfo: nil, repeats: false)
                 updateAmmo()
             }
             else
@@ -447,9 +498,17 @@ class GameScreen: SKScene {
         }
         else if ((node.name == "ammoNode" || node.name == "ammoLabelNode") && isReloading == false)
         {
-            isReloading = true
-            NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
-            ammoLabelNode?.text = "Reloading..."
+            var ammoTypeNum = 0
+            if (currentGun!.type == "Pistol")
+            {ammoTypeNum = 0}
+            else if (currentGun!.type == "Assault Rifle")
+            {ammoTypeNum = 1}
+            if (totalAmmoCount[ammoTypeNum] > 0)
+            {
+                isReloading = true
+                NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
+                ammoLabelNode?.text = "Reloading..."
+            }
         }
         else
         {
@@ -468,8 +527,25 @@ class GameScreen: SKScene {
     func endReload()
     {
         isReloading = false
-        shotsRemaining = (currentGun?.ammoClip)!
-        updateAmmo()
+        var ammoTypeNum = 0
+        if (currentGun!.type == "Pistol")
+        {ammoTypeNum = 0}
+        else if (currentGun!.type == "Assault Rifle")
+        {ammoTypeNum = 1}
+        if (totalAmmoCount[ammoTypeNum] > 0)
+        {
+            if (totalAmmoCount[ammoTypeNum] < currentGun!.ammoClip)
+            {
+                shotsRemaining = totalAmmoCount[ammoTypeNum]
+                totalAmmoCount[ammoTypeNum] = 0
+            }
+            else
+            {
+                totalAmmoCount[ammoTypeNum] -= currentGun!.ammoClip
+                shotsRemaining = (currentGun?.ammoClip)!
+            }
+            updateAmmo()
+        }
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -517,9 +593,17 @@ class GameScreen: SKScene {
         updateAmmo()
         if (shotsRemaining <= 0 && isReloading == false)
         {
-            isReloading = true
-            NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
-            ammoLabelNode?.text = "Reloading..."
+            var ammoTypeNum = 0
+            if (currentGun!.type == "Pistol")
+            {ammoTypeNum = 0}
+            else if (currentGun!.type == "Assault Rifle")
+            {ammoTypeNum = 1}
+            if (totalAmmoCount[ammoTypeNum] > 0)
+            {
+                isReloading = true
+                NSTimer.scheduledTimerWithTimeInterval((currentGun?.reloadTime)!, target: self, selector: "endReload", userInfo: nil, repeats: false)
+                ammoLabelNode?.text = "Reloading..."
+            }
         }
 
         if (isReloading == true)
@@ -531,7 +615,6 @@ class GameScreen: SKScene {
             let vecX = (point.x - playerNode.position.x)
             let vecY = (point.y - playerNode.position.y)
             let vecAngle = atan2(vecX, vecY)
-            print(vecAngle)
             if (vecAngle <= -1.3 && vecAngle >= -1.85)
             {
                 let bulletTexture = SKTexture(imageNamed: "bullet_\(currentGun!.type)")
@@ -764,8 +847,17 @@ class GameScreen: SKScene {
     
     func updateAmmo()
     {
-        ammoLabelNode?.text = "\(shotsRemaining)/\(currentGun!.ammoClip)"
-        if (shotsRemaining <= 0)
+        var ammoTypeNum = 0
+        if (currentGun!.type == "Pistol")
+        {ammoTypeNum = 0}
+        else if (currentGun!.type == "Assault Rifle")
+        {ammoTypeNum = 1}
+        ammoLabelNode?.text = "\(shotsRemaining)/\(totalAmmoCount[ammoTypeNum])"
+        if (totalAmmoCount[ammoTypeNum] <= 0 && shotsRemaining == 0)
+        {
+            ammoLabelNode?.text = "Out of Ammo"
+        }
+        else if (shotsRemaining <= 0)
         {ammoLabelNode?.text = "Reloading..."
         shotsRemaining = 0}
         let thing: CGFloat = (CGFloat)(shotsRemaining)/(CGFloat)(currentGun!.ammoClip)

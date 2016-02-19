@@ -14,6 +14,8 @@
 		<string>AK-47</string>
 		<string>AWP</string>
 	</array>
+	<key>gunAmmoCount</key>
+	<array/>
 	<key>gunType</key>
 	<array>
 		<string>Pistol</string>
