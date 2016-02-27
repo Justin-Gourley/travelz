@@ -10,6 +10,7 @@ import UIKit
 
 class GainScreen: UIViewController {
 
+    @IBOutlet weak var backgroundImage: UIImageView!
     var weaponPoints = 0
     var supplyPoints = 0
     var crewPoints = 0
@@ -39,6 +40,10 @@ class GainScreen: UIViewController {
     var ammoUnlock = ""
     var ammoGet = 0
     
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         continueButton2.hidden = true
@@ -57,6 +62,7 @@ class GainScreen: UIViewController {
         supplySlider.value = 0
         repairSlider.maximumValue = (Float)(totalPoints)
         repairSlider.value = 0
+//        backgroundImage = UIImage(named: "")
         let pointsArray = getSliderPoints()
         if (pointsArray.count > 1)
         {
@@ -292,11 +298,18 @@ class GainScreen: UIViewController {
                 var gunUnlocked = NSUserDefaults.standardUserDefaults() .valueForKey("gunUnlocked") as? [Bool]
                 let ranGun = (Int)(arc4random_uniform((UInt32)(gunName!.count)))
                 print("Gun Unlocked: \(gunName![ranGun])")
-                gunUnlocked![ranGun] = true
-                unlockedSomething = true
-                gunUnlock = gunName![ranGun]
-                NSUserDefaults.standardUserDefaults().setObject(gunUnlocked, forKey: "gunUnlocked")
-                NSUserDefaults.standardUserDefaults().synchronize()
+                if (gunUnlocked![ranGun] == true)
+                {
+                    print("Already Unlocked Weapon")
+                }
+                else
+                {
+                    gunUnlocked![ranGun] = true
+                    unlockedSomething = true
+                    gunUnlock = gunName![ranGun]
+                    NSUserDefaults.standardUserDefaults().setObject(gunUnlocked, forKey: "gunUnlocked")
+                    NSUserDefaults.standardUserDefaults().synchronize()
+                }
             }
             let ran2: Int = (Int)(arc4random_uniform(100) + 1)
             if (ran2 <= supplyPoints)

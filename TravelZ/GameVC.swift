@@ -14,6 +14,10 @@ class GameVC: UIViewController {
 
     @IBOutlet weak var gameScreen: SKView!
     
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         gameScreen.hidden = true
@@ -36,7 +40,9 @@ class GameVC: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        print("Memory Warning! Pausing game for short time...")
+        sleep(1)
+        //find a way to get rid of objects
     }
 
 }

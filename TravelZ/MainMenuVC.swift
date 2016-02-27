@@ -18,6 +18,10 @@ class MainMenuVC: UIViewController {
     var stageNum: [[Int]] = [[1,1,2,2,3,3,3,4,4,5], [2,2,3,3,4,4,4,5,5,6], [3,3,3,3,4,5,5,6,6,7], [4,4,4,5,5,6,6,7,7,8], [2,2,3,3,4,4,4,5,5,6], [2,2,3,3,4,4,4,5,5,6], [2,2,3,3,4,4,4,5,5,6], [2,2,3,3,4,4,4,5,5,6]]
     var gainSelect: Bool = false
     @IBOutlet weak var backgroundImage: UIImageView!
+
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
     
     override func viewDidAppear(animated: Bool) {
         loadData()
@@ -178,7 +182,7 @@ class MainMenuVC: UIViewController {
         CGPoint(x: width * 8, y: height * 5),
         CGPoint(x: width * 4, y: height * 7),
         CGPoint(x: width * 5, y: height * 7),
-        CGPoint(x: width * 7, y: height * 7)],
+        CGPoint(x: width * 7, y: height * 5)],
         //level 2
         [CGPoint(x: width * 2, y: height),
         CGPoint(x: width * 1, y: height * 2),
@@ -263,16 +267,55 @@ class MainMenuVC: UIViewController {
         }
         stageButtons.removeAll()
         stageButtons = []
+        var loadedHouseImages = houseImagesTest()
+        var houseImages: [String] = []
+        if (loadedHouseImages)
+        {
+            houseImages = NSUserDefaults.standardUserDefaults() .objectForKey("houseImages") as! [String]
+        }
+        var houseSave: [String] = []
         for (var i = 0; i < 10; i++)
         {
+            var houseImage: UIImage?
+            if (loadedHouseImages)
+            {
+                houseImage = UIImage(named: "\(houseImages[i])")
+            }
+            else
+            {
+                let ran: Int = (Int)(arc4random_uniform(5) + 1)
+                houseImage = UIImage(named: "townHouse\(ran)")!
+                houseSave.append("townHouse\(ran)")
+                if (i == 9)
+                {
+                    NSUserDefaults.standardUserDefaults() .setObject(houseSave, forKey: "houseImages")
+                    NSUserDefaults.standardUserDefaults() .synchronize()
+                }
+            }
             let rect = CGRect(x: positions[level!][i].x, y: positions[level!][i].y, width: 100, height: 50)
             let button: UIButton = UIButton(frame: rect)
             button.addTarget(self, action: "stageSelected:", forControlEvents: .TouchUpInside)
             button.setTitle("\(i)", forState: .Normal)
             button.setTitleColor(UIColor.blackColor(), forState: .Normal)
+            button.setBackgroundImage(houseImage, forState: .Normal)
+            button.contentMode = UIViewContentMode.ScaleAspectFill
             stageButtons.append(button)
             self.view.addSubview(stageButtons[i])
         }
+        backgroundImage.image = UIImage(named: "townMap\((level! + 1))")
+    }
+    
+    func houseImagesTest() -> Bool
+    {
+        var loadedHouseImages = true
+        guard let houseImages: [String] = NSUserDefaults.standardUserDefaults() .objectForKey("houseImages") as? [String]
+            else
+        {
+            loadedHouseImages = false
+            print("No house images to load")
+            return loadedHouseImages
+        }
+        return loadedHouseImages
     }
     
     func stageSelected(sender: UIButton!)

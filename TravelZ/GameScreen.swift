@@ -11,8 +11,7 @@ import SpriteKit
 
 class GameScreen: SKScene {
 
-    
-    var color: [UIColor] = [UIColor.redColor(), UIColor.blueColor(), UIColor.brownColor(), UIColor.yellowColor(), UIColor.whiteColor()]
+    var effectStep: Bool = false
     var level: Int?
     var levelStage: Int?
     var bulletNode: [SKNode] = []
@@ -38,6 +37,7 @@ class GameScreen: SKScene {
     var isFiring = false
     var isFiringPic = false
     var shotsRemaining = 0
+    var moveTick = 0
     var zombiesLeft = 0
     var viewController: UIViewController?
     var hasGameEnded = false
@@ -46,14 +46,20 @@ class GameScreen: SKScene {
     var barricadeHealthNode: SKSpriteNode!
     var setAttackBack: [Int] = []
     var backgroundNode: SKSpriteNode?
+    var backgroundEffectNode: [SKSpriteNode] = []
     var ammoNode: SKSpriteNode?
     var ammoLabelNode: SKLabelNode?
     var bulletNum: Int = 0
     var outOfFiringRange: Bool = false
     var currentGun: guns?
+    var tickUpdate = 0
     var secondaryGun: guns?
     var totalAmmoCount: [Int] = []
-    
+    var spitNodes: [SKSpriteNode] = []
+    var moveStickNode: SKSpriteNode?
+    var moveStickResetPos: CGPoint?
+    var explodeNodes: [SKSpriteNode] = []
+    var explodeTick: [Int] = []
     let info = AppDelegate()
     
     struct guns
@@ -89,61 +95,75 @@ class GameScreen: SKScene {
             level = 0
         }
         //setbackground of level
-        if (level == 0)
-        {
-            let image: UIImage = UIImage(named: "location1")!
-            let texture: SKTexture = SKTexture(image: image)
-            backgroundNode = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: self.frame.size)
-        }
-        else
-        {
-            backgroundNode = SKSpriteNode(color: color[level!], size: self.frame.size)
-        }
+        let image: UIImage = UIImage(named: "location-\((level! + 1))")!
+        let texture: SKTexture = SKTexture(image: image)
+        backgroundNode = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: self.frame.size)
         backgroundNode!.position = CGPoint(x: self.frame.size.width / 2, y: self.frame.size.height / 2)
         backgroundNode!.name  = "background"
         backgroundNode?.zPosition = 1
         addChild(backgroundNode!)
         print("\(currentGun?.name)")
         
+        let effectImage: UIImage = UIImage(named: "location-\(level! + 1)-effect")!
+        let effectTexture: SKTexture = SKTexture(image: effectImage)
+        backgroundEffectNode.append(SKSpriteNode(texture: effectTexture, color: UIColor.whiteColor(), size: self.frame.size))
+        backgroundEffectNode[0].position = CGPoint(x: self.frame.size.width/2, y: self.frame.size.height/2)
+        backgroundEffectNode[0].zPosition = 1050
+        addChild(backgroundEffectNode[0])
+        backgroundEffectNode.append(SKSpriteNode(color: UIColor.clearColor(), size: CGSize(width: 0, height: 0)))
+        updateEffect()
+        
         //create player node
         playerNode = SKSpriteNode(texture: SKTexture(imageNamed: "PlayerStill-\(currentGun!.name)"), color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width/10, height: self.frame.height/6))
         playerNode.position = CGPoint(x: ((self.frame.size.width / 10) * 9), y: self.frame.height / 2)
         playerNode.position.x = ((self.frame.size.width / 10) * 9) - ((playerNode.position.y / 2) + 20)
         playerNode.name = "playerNode"
-        playerNode.zPosition = 1000
+        playerNode.zPosition = 2000
         addChild(playerNode)
         
         ammoNode = SKSpriteNode(color: UIColor.grayColor(), size: CGSize(width: self.frame.size.width/4, height: self.frame.size.height / 10))
         ammoNode?.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 10 * 9)
         ammoNode?.name = "ammoNode"
-        ammoNode?.zPosition = 1011
+        ammoNode?.zPosition = 2005
         addChild(ammoNode!)
         
         let backgroundAmmoNode = SKSpriteNode(color: UIColor.darkGrayColor(), size: CGSize(width: self.frame.size.width/4, height: self.frame.size.height / 10))
         backgroundAmmoNode.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 10 * 9)
         backgroundAmmoNode.name = "ammoBackgroundNode"
-        backgroundAmmoNode.zPosition = 1010
+        backgroundAmmoNode.zPosition = 2000
         addChild(backgroundAmmoNode)
         
         
         barricadeNode = SKSpriteNode(texture: SKTexture(imageNamed: "BarricadeFull"), color: UIColor.whiteColor(), size: CGSize(width: self.frame.width / 10, height: (self.frame.height / 6) * 4))
         barricadeNode.position = CGPoint(x: (self.frame.width / 20) * 12, y: (self.frame.height / 2 - self.barricadeNode.frame.height / 4))
         barricadeNode.name = "barricadeNode"
-        barricadeNode.zPosition = 1000
+        barricadeNode.zPosition = 1050
         addChild(barricadeNode)
         
         barricadeHealthNode = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: self.frame.size.width / 5, height: self.frame.size.height / 10))
         barricadeHealthNode.position = CGPoint(x: self.frame.width / 2, y: ((self.frame.height / 10) * 9))
-        barricadeHealthNode.zPosition = 1500
+        barricadeHealthNode.zPosition = 2000
         barricadeHealthNode.name = "healthBarNode"
         addChild(barricadeHealthNode)
         
+        let moveStickBackground = SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: self.frame.width/8, height: self.frame.width/8))
+        moveStickBackground.position = CGPoint(x: (self.frame.width / 10) * 9, y: self.frame.height / 5)
+        moveStickBackground.zPosition = 2000
+        addChild(moveStickBackground)
+        
+        moveStickNode = SKSpriteNode(color: UIColor.whiteColor(), size: CGSize(width: self.frame.width/14, height: self.frame.width/14))
+        moveStickNode?.position = moveStickBackground.position
+        moveStickNode?.zPosition = 2010
+        moveStickNode?.name = "moveStick"
+        addChild(moveStickNode!)
+        moveStickResetPos = moveStickNode?.position
         updateHealth()
+        movePlayer()
         
         let switchGunNode = SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: self.frame.size.width / 6,height: self.frame.size.height / 10))
         switchGunNode.position = CGPoint(x: ((self.frame.size.width / 10) * 9), y: ((self.frame.size.height / 10) * 9))
         switchGunNode.name = "switchGun"
-        switchGunNode.zPosition = 1000
+        switchGunNode.zPosition = 2000
         addChild(switchGunNode)
         
         guard let totalAmmoCountGet = NSUserDefaults.standardUserDefaults() .objectForKey("gunAmmoCount") as? [Int]
@@ -154,7 +174,7 @@ class GameScreen: SKScene {
             ammoLabelNode?.fontSize = (ammoNode!.size.width / 10)
             ammoLabelNode?.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 20 * 18)
             ammoLabelNode?.name = "ammoLabelNode"
-            ammoLabelNode?.zPosition = 1015
+            ammoLabelNode?.zPosition = 2015
             addChild(ammoLabelNode!)
             print("Error obtaining ammo for guns")
             return
@@ -171,7 +191,7 @@ class GameScreen: SKScene {
         ammoLabelNode?.fontSize = (ammoNode!.size.width / 10)
         ammoLabelNode?.position = CGPoint(x: self.frame.width / 10 + self.frame.size.width/8, y: self.frame.height / 20 * 18)
         ammoLabelNode?.name = "ammoLabelNode"
-        ammoLabelNode?.zPosition = 1015
+        ammoLabelNode?.zPosition = 2015
         addChild(ammoLabelNode!)
         
         NSTimer.scheduledTimerWithTimeInterval(currentGun!.reloadTime, target: self, selector: "endReload", userInfo: nil, repeats: false)
@@ -183,6 +203,7 @@ class GameScreen: SKScene {
     
     func createZombies()
     {
+        var zombieSpawns: [Int] = [0, 0, 0, 0, 0, 0, 0]
         let randomNum: UInt32 = (UInt32)((level! + 1) * levelStage!)
         let random = arc4random_uniform(randomNum) + 10
         numberOfZombies = (Int)(random)
@@ -190,14 +211,77 @@ class GameScreen: SKScene {
         print("Number of zombies spawned for level: \(numberOfZombies)")
         for (var i = 0; i < numberOfZombies; i++)
         {
-            zombieHealth.append(100)
+            let ranType = (Int)(arc4random_uniform((UInt32)((level! + 1) * 5)) + 10)
+            let ran = (Int)(arc4random_uniform(3) + 1)
+            var node: SKSpriteNode?
+            var zombieTypeName = ""
+            
+            if (ranType > 15 && ranType <= 18)
+            {
+                zombieSpawns[1]++
+                zombieTypeName = "Tank"
+                let texture = SKTexture(imageNamed: "zombieTank_pos_\(ran)")
+                //node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 8, height: self.frame.size.width / 4))
+                node = SKSpriteNode(color: UIColor.brownColor(), size: CGSize(width: self.frame.size.width / 12, height: self.frame.size.width / 7))
+                zombieHealth.append(300)
+            }
+            else if (ranType > 20 && ranType <= 22)
+            {
+                zombieSpawns[2]++
+                zombieTypeName = "Spitter"
+                let texture = SKTexture(imageNamed: "zombieSpitter_pos_\(ran)")
+                //node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+                node = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: self.frame.size.width / 18, height: self.frame.size.width / 10))
+                zombieHealth.append(70)
+            }
+            else if (ranType > 25 && ranType <= 33)
+            {
+                zombieSpawns[3]++
+                zombieTypeName = "Runner"
+                let texture = SKTexture(imageNamed: "zombieRunner_pos_\(ran)")
+                //node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+                node = SKSpriteNode(color: UIColor.redColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+                zombieHealth.append(70)
+            }
+            else if (ranType > 33 && ranType <= 35)
+            {
+                zombieSpawns[4]++
+                zombieTypeName = "Baby"
+                let texture = SKTexture(imageNamed: "zombieRunner_pos_\(ran)")
+                //node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+                node = SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: self.frame.size.width / 30, height: self.frame.size.width / 16))
+                zombieHealth.append(50)
+            }
+            else if (ranType > 35 && ranType <= 36)
+            {
+                zombieSpawns[6]++
+                zombieTypeName = "Exploder"
+                let texture = SKTexture(imageNamed: "zombieExploder_pos_\(ran)")
+                node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 12, height: self.frame.size.width / 8))
+                zombieHealth.append(125)
+            }
+            else if (ranType > 0 && ranType <= 0)
+            {
+                zombieSpawns[5]++
+                zombieTypeName = "Spawner"
+                let texture = SKTexture(imageNamed: "zombieSpawner_pos_\(ran)")
+                //node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 12, height: self.frame.size.width / 8))
+                node = SKSpriteNode(color: UIColor.blueColor(), size: CGSize(width: self.frame.size.width / 12, height: self.frame.size.width / 7))
+                zombieHealth.append(150)
+            }
+            else
+            {
+                zombieSpawns[0]++
+                zombieTypeName = "Normal"
+                let texture = SKTexture(imageNamed: "zombieNormal_pos_\(ran)")
+                node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+                zombieHealth.append(100)
+            }
             isZombieAttacking.append(false)
             let ranTick = arc4random_uniform(10) + 1
             zombieAnimationTick.append((Int)(ranTick))
             isZombieAnimating.append(false)
-            let ran = (Int)(arc4random_uniform(3) + 1)
-            let texture = SKTexture(imageNamed: "zombie_pos_\(ran)")
-            let node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+
             var randomX: CGFloat = 0
             if (i < 6)
             {
@@ -208,17 +292,42 @@ class GameScreen: SKScene {
                 randomX = (CGFloat)(arc4random_uniform((UInt32)(i) * 50))
             }
             
-            node.position = CGPoint(x: -(randomX), y: (CGFloat)((arc4random_uniform((UInt32)(((self.frame.height / 6) * 4) - (playerNode.frame.height / 2)))) + (UInt32)(self.frame.height / 20)))
-            node.zPosition = (view!.frame.height - node.position.y) + 10
-            zombieNodes.append(node)
-            let speedRandom = arc4random_uniform(2) + 1
+            node!.position = CGPoint(x: -(randomX), y: (CGFloat)((arc4random_uniform((UInt32)(((self.frame.height / 6) * 4) - (playerNode.frame.height / 2)))) + (UInt32)(self.frame.height / 20)))
+            node!.zPosition = (view!.frame.height - node!.position.y) + 10
+            zombieNodes.append(node!)
+            var maxSpeed = 0
+            switch (zombieTypeName)
+            {
+            case "Tank":
+                maxSpeed = 2
+                break;
+            case "Spitter":
+                maxSpeed = 6
+                break;
+            case "Runner":
+                maxSpeed = 12
+                break;
+            case "Baby":
+                maxSpeed = 10
+                break;
+            case "Spawner":
+                maxSpeed = 4
+                break;
+            case "Exploder":
+                maxSpeed = 10
+                break;
+            default:
+                maxSpeed = 8
+            }
+            let speedRandom: CGFloat = ((CGFloat)(arc4random_uniform((UInt32)((maxSpeed) + 1))) * 0.2) + 1
             if (speedRandom < 1)
             {
                 print("A Zombie is broken.... he wont move?!?!?")
             }
-            zombieClass.append(zombieType.init(speed: (CGFloat)(speedRandom), type: "normal", canAttack: true, animationState: (Int)(ran)))
+            zombieClass.append(zombieType.init(speed: (speedRandom), type: zombieTypeName, canAttack: true, animationState: (Int)(ran)))
             addChild(zombieNodes[i])
         }
+        print("Zombie Spawns:\nNormal: \(zombieSpawns[0])\nTank: \(zombieSpawns[1])\nSpitters: \(zombieSpawns[2])\nRunners: \(zombieSpawns[3])\nBabies: \(zombieSpawns[4])\nSpawner: \(zombieSpawns[5])\nExploder: \(zombieSpawns[6])")
     }
     
     func loadGameData()
@@ -267,13 +376,67 @@ class GameScreen: SKScene {
             print("Succesfully saved game data...")
     }
     
+    func updateEffect()
+    {
+        if (backgroundEffectNode[0].position.x == self.frame.width/2)
+        {
+            effectStep = true
+            createEffect()
+        }
+        if (backgroundEffectNode[0].position.x == (self.frame.width * 1.5))
+        {
+            effectStep = false
+            backgroundEffectNode[0].removeFromParent()
+            backgroundEffectNode[0] = backgroundEffectNode[1]
+            createEffect()
+        }
+        for (var i = 0; i < backgroundEffectNode.count; i++)
+        {
+            backgroundEffectNode[i].position.x += 1
+        }
+    }
+    
+    func createEffect()
+    {
+        let effectImage: UIImage = UIImage(named: "location-\((level! + 1))-effect")!
+        let effectTexture: SKTexture = SKTexture(image: effectImage)
+        backgroundEffectNode[1] = SKSpriteNode(texture: effectTexture, color: UIColor.whiteColor(), size: self.frame.size)
+        backgroundEffectNode[1].position = CGPoint(x: backgroundEffectNode[0].position.x - self.frame.width, y: self.frame.size.height/2)
+        backgroundEffectNode[1].zPosition = 1050
+        addChild(backgroundEffectNode[1])
+    }
+    
     //Update game time
     override func update(currentTime: NSTimeInterval) {
         if (hasGameEnded == false)
         {
-            if (numberOfBullets > 0)
+            tickUpdate++
+            if (tickUpdate == 3)
             {
-                updateBulletPosition()
+                tickUpdate = 0
+                updateEffect()
+            }
+            if (movingPlayer == true)
+            {
+                movePlayer()
+                    moveTick++
+                    if (moveTick == 10)
+                    {
+                        moveTick = 0
+                        updateCharacterAnimation()
+                    }
+            }
+            else
+            {
+                if (playerAnimateState != 0)
+                {
+                    playerAnimateState = 0
+                    updateCharacterTexture()
+                }
+            }
+            if (spitNodes.count > 0)
+            {
+                updateSpitNodes()
             }
             if (shotsAt != nil)
             {
@@ -282,14 +445,14 @@ class GameScreen: SKScene {
                     if ((!isReloading) && (!isPlayerMoving))
                     {
                         isFiring = true
-                        updateCharacterAnimation()
+                        updateCharacterTexture()
                     }
                     else
                     {
                         if (isFiring == true)
                         {
                             isFiring = false
-                            updateCharacterAnimation()
+                            updateCharacterTexture()
                         }
                     }
                     var ammoTypeNum = 0
@@ -309,7 +472,7 @@ class GameScreen: SKScene {
                     if (isFiring == true)
                     {
                         isFiring = false
-                        updateCharacterAnimation()
+                        updateCharacterTexture()
                     }
                 }
             }
@@ -318,7 +481,7 @@ class GameScreen: SKScene {
                 if (isFiring == true)
                 {
                     isFiring = false
-                    updateCharacterAnimation()
+                    updateCharacterTexture()
                 }
             }
             moveZombies()
@@ -353,77 +516,81 @@ class GameScreen: SKScene {
                     }
                 }
             }
-            if (movingPlayer == true)
+            if (explodeNodes.count > 0)
             {
-                if (isPlayerMoving == true)
+                for (var i = 0; i < explodeNodes.count; i++)
                 {
-                    //do nothing
-                }
-                else
-                {
-                    isPlayerMoving = true
-                    NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "updateCharacterAnimation", userInfo: nil, repeats: false)
+                    explodeTick[i]++
+                    if (explodeTick[i] > 23)
+                    {
+                        explodeNodes[i].removeFromParent()
+                        for (var j = i; j < explodeNodes.count - 1; j++)
+                        {
+                            explodeNodes[j] = explodeNodes[j + 1]
+                            explodeTick[j] = explodeTick[j + 1]
+                        }
+                        explodeNodes.popLast()
+                        explodeTick.popLast()
+                    }
+                    else
+                    {
+                        explodeNodes[i].texture = SKTexture(imageNamed: "explosion_\(explodeTick[i])")
+                    }
                 }
             }
-            else
-            {
-                if (playerAnimateState != 0)
-                {
-                    playerAnimateState = 0
-                    updateCharacterTexture()
-                }
-            }
+        }
+        if (numberOfBullets > 0)
+        {
+            updateBulletPosition()
         }
         if (hasGameEnded == true)
         {
         }
     }
     
+    func movePlayer()
+    {
+        playerNode.position.y += ((moveStickNode?.position.y)! - (moveStickResetPos?.y)!) / 7
+        if (playerNode.position.y > (((self.frame.height / 6) * 4) - (playerNode.frame.height / 2)))
+        {
+            playerNode.position.y = (((self.frame.height / 6) * 4) - (playerNode.frame.height / 2))
+        }
+        else if (playerNode.position.y < ((self.frame.height / 20) + (playerNode.frame.height / 2)))
+        {
+            playerNode.position.y = ((self.frame.height / 20) + (playerNode.frame.height / 2))
+        }
+
+        playerNode.position.x = ((self.frame.size.width / 10) * 8) - ((playerNode.position.y / 3))
+    }
+    
     func updateZombieAnimation(zombieNum: Int)
     {
-        if (isZombieAttacking[zombieNum] == false)
+        if (zombieClass[zombieNum].type == "Normal" || zombieClass[zombieNum].type == "Exploder") //temp stop due to limited art
         {
-            zombieClass[zombieNum].animationState++
-            if (zombieClass[zombieNum].animationState > 3)
+            if (isZombieAttacking[zombieNum] == false)
             {
-                zombieClass[zombieNum].animationState = 1
+                zombieClass[zombieNum].animationState++
+                if (zombieClass[zombieNum].animationState > 3)
+                {
+                    zombieClass[zombieNum].animationState = 1
+                }
+                zombieNodes[zombieNum].texture = SKTexture(imageNamed: "zombie\(zombieClass[zombieNum].type)_pos_\(zombieClass[zombieNum].animationState)")
             }
-            zombieNodes[zombieNum].texture = SKTexture(imageNamed: "zombie_pos_\(zombieClass[zombieNum].animationState)")
-        }
-        else
-        {
-            zombieClass[zombieNum].animationState++
-            if (zombieClass[zombieNum].animationState > 3)
+            else
             {
-                zombieClass[zombieNum].animationState = 1
+                zombieClass[zombieNum].animationState++
+                if (zombieClass[zombieNum].animationState > 3)
+                {
+                    zombieClass[zombieNum].animationState = 1
+                }
+                zombieNodes[zombieNum].texture = SKTexture(imageNamed: "zombie\(zombieClass[zombieNum].type)_attack_\(zombieClass[zombieNum].animationState)")
             }
-            zombieNodes[zombieNum].texture = SKTexture(imageNamed: "zombie_attack_\(zombieClass[zombieNum].animationState)")
         }
     }
     
     func updateCharacterAnimation()
     {
-        if (isFiring == true && outOfFiringRange == false)
-        {
-            if (isFiringPic)
-            {
-                isFiringPic = false
-            }
-            else
-            {
-                isFiringPic = true
-            }
-            var ammoTypeNum = 0
-            if (currentGun!.type == "Pistol")
-            {ammoTypeNum = 0}
-            else if (currentGun!.type == "Assault Rifle")
-            {ammoTypeNum = 1}
-            if (totalAmmoCount[ammoTypeNum] > 0)
-            {
-                isFiringPic = false
-            }
-        }
-        else if (playerAnimateState == 0)
+        if (playerAnimateState == 0)
         {
             playerAnimateState = 1
         }
@@ -454,16 +621,20 @@ class GameScreen: SKScene {
         {
             isFiring = false
         }
+        var what = 0
         if (isFiring)
         {
+            what = 1
             playerNode.texture = SKTexture(imageNamed: "PlayerFire-\(currentGun!.name)")
         }
         else if (playerAnimateState == 0)
         {
+            what = 2
             playerNode.texture = SKTexture(imageNamed: "PlayerStill-\(currentGun!.name)")
         }
         else
         {
+            what = 3
             playerNode.texture = SKTexture(imageNamed: "PlayerMoving\(playerAnimateState)-\(currentGun!.name)")
         }
     }
@@ -474,7 +645,7 @@ class GameScreen: SKScene {
         let point = touch!.locationInNode(self)
         let node = nodeAtPoint(point)
 
-        if (node.name == "playerNode")
+        if (node.name == "moveStick")
         {
             movingPlayer = true
         }
@@ -512,6 +683,8 @@ class GameScreen: SKScene {
         }
         else
         {
+            movingPlayer = false
+            moveStickNode?.position = moveStickResetPos!
             shotsAt = point
         }
         
@@ -557,19 +730,16 @@ class GameScreen: SKScene {
         }
         if (movingPlayer == true)
         {
-            if (point?.y > (((self.frame.height / 6) * 4) - (playerNode.frame.height / 2)))
+            moveStickNode?.position.y = (point?.y)!
+            if (moveStickNode?.position.y > ((moveStickResetPos?.y)! * 1.3))
             {
-                playerNode.position.y = (((self.frame.height / 6) * 4) - (playerNode.frame.height / 2))
+                moveStickNode?.position.y = ((moveStickResetPos?.y)! * 1.3)
             }
-            else if (point?.y < ((self.frame.height / 20) + (playerNode.frame.height / 2)))
+            else if (moveStickNode?.position.y < (moveStickResetPos!.y * 0.75))
             {
-                playerNode.position.y = ((self.frame.height / 20) + (playerNode.frame.height / 2))
+                moveStickNode?.position.y = moveStickResetPos!.y * 0.75
             }
-            else
-            {
-                playerNode.position.y = (point?.y)!
-            }
-            playerNode.position.x = ((self.frame.size.width / 10) * 9) - ((playerNode.position.y / 2) + 20)
+            moveStickNode?.position.x = moveStickResetPos!.x
         }
     }
     
@@ -582,6 +752,7 @@ class GameScreen: SKScene {
         }
         if (movingPlayer == true)
         {
+            moveStickNode?.position = moveStickResetPos!
             movingPlayer = false
         }
 
@@ -689,8 +860,63 @@ class GameScreen: SKScene {
                             bulletIsActive[i] = false
                             if (zombieHealth[j] <= 0)
                             {
-                                removeZombieAt(j)
-                                zombiesLeft--
+                                if (zombieClass[j].type == "Spawner")
+                                {
+                                    let ranNum = arc4random_uniform(3)
+                                    removeZombieAt(j)
+                                    zombiesLeft--
+                                    for (var b = 0; b < (Int)(ranNum + 3); b++)
+                                    {
+                                        let ranY: CGFloat = (CGFloat)(arc4random_uniform(80) + 1)
+                                        let zombieTypeName = "Normal"
+                                        let ran = arc4random_uniform(3) + 1
+                                        let texture = SKTexture(imageNamed: "zombieNormal_pos_\(ran)")
+                                        let node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+                                        zombieHealth.append(100)
+                                        isZombieAttacking.append(false)
+                                        let ranTick = arc4random_uniform(10) + 1
+                                        zombieAnimationTick.append((Int)(ranTick))
+                                        isZombieAnimating.append(false)
+                                        let ranChange: CGFloat = zombieNodes[j].position.y + (ranY - 40)
+                                        node.position = CGPoint(x: zombieNodes[j].position.x, y: ranChange)
+                                        node.zPosition = (view!.frame.height - node.position.y) + 10
+                                        zombieNodes.append(node)
+                                        let speedRandom: CGFloat = ((CGFloat)(arc4random_uniform((UInt32)((10) + 1))) * 0.2) + 1
+                                        if (speedRandom < 1)
+                                        {
+                                            print("A Spawned in zombie can't move?")
+                                        }
+                                        zombieClass.append(zombieType.init(speed: (speedRandom), type: zombieTypeName, canAttack: true, animationState: (Int)(ran)))
+                                        addChild(zombieNodes[(zombieNodes.count - 1)])
+                                        zombiesLeft++
+                                    }
+                                }
+                                if (zombieClass[j].type == "Exploder")
+                                {
+                                    explodeAtPos(zombieNodes[j].position)
+                                    let explodePos = zombieNodes[j].position
+                                    removeZombieAt(j)
+                                    zombiesLeft--
+                                    explodeAtPos(explodePos)
+                                    for (var a = 0; a < zombieNodes.count; a++)
+                                    {
+                                        if ((zombieNodes[a].position.x >= explodePos.x + self.frame.width / 8 && zombieNodes[a].position.x <= explodePos.x - self.frame.width / 8) || (zombieNodes[a].position.y >= explodePos.y + self.frame.width / 8 && zombieNodes[a].position.y <= explodePos.y - self.frame.width / 8))
+                                        {
+                                            zombieHealth[a] -= 50
+                                            if (zombieHealth[a] <= 0)
+                                            {
+                                                removeZombieAt(a)
+                                                zombiesLeft--
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //zombie death animation
+                                    removeZombieAt(j)
+                                    zombiesLeft--
+                                }
                             }
                     }
 
@@ -699,6 +925,38 @@ class GameScreen: SKScene {
         }
     }
     
+    func createMoreZombies(spawnPoint: CGPoint, numberToSpawn: Int)
+    {
+        for (var i = 0; i < numberToSpawn; i++)
+        {
+            let ran = (Int)(arc4random_uniform(3) + 1)
+            var node: SKSpriteNode?
+            var zombieTypeName = ""
+    
+            zombieTypeName = "Normal"
+            let texture = SKTexture(imageNamed: "zombieNormal_pos_\(ran)")
+            node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.size.width / 15, height: self.frame.size.width / 8))
+            zombieHealth.append(100)
+            
+            isZombieAttacking.append(false)
+            let ranTick = arc4random_uniform(10) + 1
+            zombieAnimationTick.append((Int)(ranTick))
+            isZombieAnimating.append(false)
+            
+            let randomX: CGFloat = spawnPoint.x - (CGFloat)(arc4random_uniform((UInt32)(self.frame.width/30)))
+            let randomY: CGFloat = spawnPoint.y - ((CGFloat)(arc4random_uniform((UInt32)(self.frame.width/100))) - 50)
+            node!.position = CGPoint(x: -(randomX), y: randomY)
+            node!.zPosition = (view!.frame.height - node!.position.y) + 10
+            zombieNodes.append(node!)
+            let maxSpeed = 8
+            let speedRandom: CGFloat = ((CGFloat)(arc4random_uniform((UInt32)((maxSpeed) + 1))) * 0.2) + 1
+            zombieClass.append(zombieType.init(speed: (speedRandom), type: zombieTypeName, canAttack: true, animationState: (Int)(ran)))
+            zombieNodes.append(node!)
+            addChild(zombieNodes[zombieNodes.count - 1])
+        }
+        print("\(numberToSpawn) More Zombies Spawned in @ Spawner pos (\(spawnPoint))")
+    }
+
     func createBloodSplatter(pos: CGPoint)
     {
         let ran = arc4random_uniform(1) + 1
@@ -738,7 +996,14 @@ class GameScreen: SKScene {
         if (barricadeHealth <= 0 && hasGameEnded == false)
         {
             hasGameEnded = true
-            endGameLose()
+            let endNode = SKLabelNode(text: "You have been killed....")
+            endNode.fontSize = self.frame.width / 25
+            endNode.zPosition = 9999
+            endNode.fontColor = UIColor.whiteColor()
+            endNode.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
+            addChild(endNode)
+            hasGameEnded = true
+            NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: "endGameLose", userInfo: nil, repeats: false)
             info.playerLost = true
         }
     }
@@ -753,14 +1018,105 @@ class GameScreen: SKScene {
     {
         for (var i = 0; i < numberOfZombies; i++)
         {
-            if (zombieNodes[i].position.x >= ((self.barricadeNode.position.x - (self.barricadeNode.frame.width / 2)) - (self.zombieNodes[i].position.y / 10)))
+            if (zombieClass[i].type == "Tank")
             {
-                isZombieAttacking[i] = true
-                    removeHealth((Double)((3 - (zombieClass[i].speed)) * 0.01))
+                if (zombieNodes[i].position.x >= ((self.barricadeNode.position.x - (self.barricadeNode.frame.width / 2)) - (self.zombieNodes[i].position.y / 10)))
+                {
+                    isZombieAttacking[i] = true
+                    removeHealth((Double)((3 - (zombieClass[i].speed)) * 0.02))
+                }
+                else
+                {
+                    isZombieAttacking[i] = false
+                }
+            }
+            else if (zombieClass[i].type == "Spitter")
+            {
+                if (zombieNodes[i].position.x >= ((self.view?.frame.width)! / 2 - self.barricadeNode.frame.width))
+                {
+                    isZombieAttacking[i] = true
+                    let ran = arc4random_uniform(40) + 1
+                    if (ran == 1)
+                    {
+                        fireSpit(zombieNodes[i].position)
+                    }
+                }
+                else
+                {
+                    isZombieAttacking[i] = false
+                }
+            }
+            else if (zombieClass[i].type == "Exploder")
+            {
+                if (zombieNodes[i].position.x >= ((self.barricadeNode.position.x - (self.barricadeNode.frame.width / 2)) - (self.zombieNodes[i].position.y / 10)))
+                {
+                    isZombieAttacking[i] = true
+                    let ran = arc4random_uniform(3) + 1
+                    removeHealth((Double)(ran * 10))
+                    explodeAtPos(zombieNodes[i].position)
+                    removeZombieAt(i)
+                    zombiesLeft--
+                }
+                else
+                {
+                    isZombieAttacking[i] = false
+                }
             }
             else
             {
+                if (zombieNodes[i].position.x >= ((self.barricadeNode.position.x - (self.barricadeNode.frame.width / 2)) - (self.zombieNodes[i].position.y / 10)))
+                {
+                    isZombieAttacking[i] = true
+                    removeHealth((Double)((3 - (zombieClass[i].speed)) * 0.01))
+                }
+                else
+                {
+                    isZombieAttacking[i] = false
+                }
+            }
+            if (isZombieAttacking[i] == false)
+            {
                 zombieNodes[i].position.x += zombieClass[i].speed
+            }
+        }
+    }
+    
+    func explodeAtPos(point: CGPoint)
+    {
+        let texture = SKTexture(imageNamed: "explosion_1")
+        let node = SKSpriteNode(texture: texture, color: UIColor.whiteColor(), size: CGSize(width: self.frame.width / 4, height: self.frame.width / 4))
+        node.position = point
+        node.zPosition = 1500
+        explodeTick.append(1)
+        explodeNodes.append(node)
+        addChild(node)
+    }
+    
+    func fireSpit(location: CGPoint)
+    {
+        let spitNode = SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: self.view!.frame.width / 20, height: self.view!.frame.width/20))
+        spitNode.position = location
+        spitNode.zPosition = 1500
+        spitNodes.append(spitNode)
+        addChild(spitNode)
+    }
+
+    func updateSpitNodes()
+    {
+        for (var i = 0; i < spitNodes.count; i++)
+        {
+            spitNodes[i].position.x += self.frame.width/20
+            if (spitNodes[i].position.x >= barricadeNode.position.x)
+            {
+                spitNodes[i].removeFromParent()
+                for (var j = i; j < spitNodes.count - 1; j++)
+                {
+                    spitNodes[j] = spitNodes[j + 1]
+                }
+                spitNodes.popLast()
+                let ranHurt: Double = (Double)(arc4random_uniform(50) + 1) * 0.1
+                barricadeHealth! -= ranHurt
+                updateHealth()
             }
         }
     }
@@ -843,6 +1199,11 @@ class GameScreen: SKScene {
         barricadeHealthNode.removeFromParent()
         backgroundNode?.removeFromParent()
         barricadeNode.removeFromParent()
+        backgroundEffectNode[0].removeFromParent()
+        backgroundEffectNode[1].removeFromParent()
+        self .removeAllActions()
+        self .removeAllChildren()
+        self .removeFromParent()
     }
     
     func updateAmmo()

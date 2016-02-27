@@ -33,6 +33,10 @@ class GunScreen: UIViewController, UIScrollViewDelegate {
     var gunIcons: [UIImage] = []
     var gunPictures: [String] = ["PlayerMoving1"]
 
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -82,5 +82,7 @@
 	<array/>
 	<key>finishedLevel</key>
 	<false/>
+	<key>houseImages</key>
+	<array/>
 </dict>
 </plist>
